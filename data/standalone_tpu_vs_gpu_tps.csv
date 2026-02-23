@@ -1,0 +1,6 @@
+dataset,tpu_baseline_tps,tpu_dflash_tps,gpu_dflash_tps,tpu_speedup,gpu_speedup
+gsm8k,93,342,380,3.68,4.09
+math500,93,531,420,5.71,4.52
+aime24,93,420,410,4.52,4.41
+aime25,93,435,398,4.68,4.28
+AVERAGE,93,432,402,4.65,4.32

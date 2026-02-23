@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+    <title>DFlash on TPU - Speculative Decoding at Scale</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="brand">
+          <div class="brand-title">DFlash on TPU</div>
+          <div class="brand-subtitle">Diffusion-based speculative decoding ported to TPU</div>
+        </div>
+        <nav class="nav">
+          <a href="#overview">Overview</a>
+          <a href="#team">Team</a>
+          <a href="#problem">Problem</a>
+          <a href="#methods">Methods</a>
+          <a href="#results">Results</a>
+          <a href="#conclusion">Conclusion</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="overview" class="hero">
+        <div class="container">
+          <div class="hero-text">
+            <h1>Toward Accelerated LLM Inference:
+              Porting and Evaluating Diffusion-Based
+              Speculative Decoding on TPU</h1>
+            <p>
+              Autoregressive decoding is inherently sequential: generating n tokens requires n target-model forward passes.
+              We port DFlash, a diffusion-based speculative decoding method that drafts a whole token block in parallel, to TPU in JAX within the
+              <span style="white-space:nowrap;">vLLM</span> <span style="white-space:nowrap;">TPU</span> inference stack, and benchmark both standalone loops and serving-pipeline integration.
+            </p>
+            <div class="hero-links">
+              <a class="button" href="https://github.com/aaronzhfeng/tpu-spec-decode">Code</a>
+              <a class="button" href="https://github.com/aaronzhfeng/tpu-inference">TPU Inference Fork</a>
+              <a class="button" href="#results">View Results</a>
+            </div>
+          </div>
+          <div class="hero-card">
+            <div class="card-title">Key Outcome</div>
+            <div class="metric">
+              <div class="metric-value">100×</div>
+              <div class="metric-label">Best speedup (placeholder)</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value">7.00</div>
+              <div class="metric-label">Final acceptance length τ (avg, placeholder)</div>
+            </div>
+            <div class="note">
+              🛠️ NOTE: All data in this website are placeholders and will be replaced with finalized benchmarks. The content and design of this website, especially the methods section, are still under construction.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="team" class="section team-section">
+        <div class="container">
+          <div class="team-core">
+            <h3 class="team-subheading">Team Members</h3>
+            <div class="team-grid">
+              <div class="team-card">
+                <div class="team-initial">A</div>
+                <div class="team-name">Aaron Feng</div>
+              </div>
+              <div class="team-card">
+                <div class="team-initial">Z</div>
+                <div class="team-name">Zhongyan Luo</div>
+              </div>
+              <div class="team-card">
+                <div class="team-initial">S</div>
+                <div class="team-name">Son Nguyen</div>
+              </div>
+              <div class="team-card">
+                <div class="team-initial">A</div>
+                <div class="team-name">Andy Huang</div>
+              </div>
+            </div>
+          </div>
+          <div class="team-advisors">
+            <h3 class="team-subheading">Advisors</h3>
+            <div class="team-grid team-grid-advisors">
+              <div class="team-card team-card-mentor">
+                <div class="team-initial">H</div>
+                <div class="team-name">Hao Zhang</div>
+                <div class="team-role">Mentor</div>
+              </div>
+              <div class="team-card team-card-ta">
+                <div class="team-initial">Y</div>
+                <div class="team-name">Yiming Zhao</div>
+                <div class="team-role">TA</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="problem" class="section">
+        <div class="container">
+          <h2>Problem and Motivation</h2>
+          <p>
+            In standard decoding, large language models generate one token at a time; each new token depends on all prior tokens.
+            This sequential dependency makes long-form generations, especially chain-of-thought style reasoning, slow and expensive, because the target model must run once per output token.
+          </p>
+          <p>
+            <strong>Speculative decoding</strong> reduces this cost by splitting decoding into two stages:
+            a lightweight <em>draft</em> proposes a short continuation, and the full <em>target</em> model verifies those candidates in a single batched pass.
+            The key metric is the average acceptance length τ: how many draft tokens are accepted per verification step.
+          </p>
+          <p>
+            <strong>DFlash</strong> replaces sequential (autoregressive) drafting with a diffusion-style <em>block</em> drafter that predicts an entire fixed-size token block in one forward pass using non-causal attention.
+            That parallel, dense computation pattern aligns well with TPU hardware.
+            Our work ports DFlash from GPU/PyTorch to TPU/JAX inside <code>tpu-inference</code>, evaluates performance in both standalone and vLLM pipeline settings, compares against autoregressive drafting (Eagle3), and checks that output quality is preserved.
+          </p>
+
+        <div id="replay-section" class="panel" style="margin-top: 28px;">
+          <h3>Inference Demo</h3>
+          <p class="panel-subtitle">Pick a dataset prompt and compare decoded outputs and throughput across baseline decoding, DFlash (GPU/TPU), and Eagle3.</p>
+          <div id="replay-cards" class="replay-cards">
+            <p class="replay-placeholder">Scroll down to load replay samples…</p>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section id="methods" class="section">
+        <div class="container">
+          <h2>Methods: GPU → TPU Migration</h2>
+          <div class="methods-grid">
+            <div class="methods-figure">
+              <img src="assets/methods_diagram.svg" alt="DFlash GPU to TPU migration diagram" style="max-width:100%;height:auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" />
+              <div style="display:none" class="svg-fallback">
+                <svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520"><rect width="900" height="520" fill="#fff"/><text x="40" y="40" font-family="Arial" font-size="22" font-weight="700" fill="#0f172a">DFlash GPU → TPU Migration</text><rect x="40" y="70" width="360" height="180" rx="12" fill="#f1f5f9" stroke="#cbd5f5"/><text x="60" y="105" font-family="Arial" font-size="16" font-weight="700">GPU (PyTorch)</text><text x="60" y="135" font-size="13" fill="#334155">• Draft model: diffusion block (b16)</text><text x="60" y="160" font-size="13" fill="#334155">• Target verification in PyTorch</text><text x="60" y="185" font-size="13" fill="#334155">• DynamicCache (concat KV)</text><text x="60" y="210" font-size="13" fill="#334155">• GPU FlashAttention</text><rect x="500" y="70" width="360" height="180" rx="12" fill="#eef2ff" stroke="#c7d2fe"/><text x="520" y="105" font-family="Arial" font-size="16" font-weight="700">TPU (JAX / tpu-inference)</text><text x="520" y="135" font-size="13" fill="#334155">• Draft model: diffusion block (b16)</text><text x="520" y="160" font-size="13" fill="#334155">• Target verification in JAX</text><text x="520" y="185" font-size="13" fill="#334155">• Dual KV cache (paged + static)</text><text x="520" y="210" font-size="13" fill="#334155">• TPU flash_attention (non-causal)</text><line x1="400" y1="160" x2="500" y2="160" stroke="#64748b" stroke-width="2"/><rect x="40" y="280" width="820" height="200" rx="14" fill="#f8fafc" stroke="#e2e8f0"/><text x="60" y="315" font-size="16" font-weight="700">Key Porting Steps</text><rect x="60" y="335" width="240" height="110" rx="10" fill="#fff" stroke="#e2e8f0"/><text x="78" y="365" font-size="13" font-weight="700">Dual KV Cache</text><text x="78" y="388" font-size="12" fill="#475569">Target uses paged KV; draft uses static JAX KV.</text><rect x="330" y="335" width="240" height="110" rx="10" fill="#fff" stroke="#e2e8f0"/><text x="348" y="365" font-size="13" font-weight="700">Attention Kernel Swap</text><text x="348" y="388" font-size="12" fill="#475569">Use TPU flash_attention with non-causal block.</text><rect x="600" y="335" width="240" height="110" rx="10" fill="#fff" stroke="#e2e8f0"/><text x="618" y="365" font-size="13" font-weight="700">Seq-len Alignment Fix</text><text x="618" y="388" font-size="12" fill="#475569">Track accepted length to prevent state drift.</text></svg>
+              </div>
+            </div>
+            <div class="methods-text">
+              <h3>Key engineering steps</h3>
+              <ul>
+                <li><strong>Dual KV cache architecture:</strong> keep paged KV for the target (vLLM PagedAttention) while maintaining a separate static JAX KV cache for the draft’s non-causal block attention.</li>
+                <li><strong>TPU attention kernel swap:</strong> use TPU flash attention with <code>causal=false</code> to match DFlash’s block-diffusion drafting pattern.</li>
+                <li><strong>State alignment in verification:</strong> fix sequence-length bookkeeping so the proposer advances by the accepted token count, preventing drift across speculative iterations.</li>
+              </ul>
+              <p>
+                We preserve the DFlash interface: extract target hidden-state features, run a lightweight block drafter, reuse the target vocabulary/LM head for logits, then verify a full draft block in one target forward pass.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="results" class="section">
+        <div class="container">
+          <h2>Results</h2>
+          <p>
+            We benchmark on the same four math reasoning datasets used in the DFlash paper (GSM8K, Math500, AIME24, AIME25), in both a standalone loop and the full vLLM serving pipeline.
+            The charts below report throughput, acceptance behavior, and comparisons against autoregressive drafting (Eagle3).
+          </p>
+
+          <div class="grid">
+            <div class="panel">
+              <h3>vLLM Pipeline TPS</h3>
+              <div id="vllm-pipeline-tps-chart" class="chart-container"></div>
+              <p class="chart-description">Tokens/sec in the <span style="white-space:nowrap;">vLLM</span> TPU pipeline for baseline decoding (no speculation), DFlash, and Eagle3. <button type="button" class="chart-view-more" aria-expanded="false" aria-controls="vllm-details">view more…</button></p>
+              <div id="vllm-details" class="chart-details-content chart-details-collapsed">
+                <p><strong>Methodology:</strong> Same vLLM TPU pipeline and datasets; we report per-dataset TPS plus an overall aggregate. DFlash runs with a Qwen3-4B target + DFlash draft model; Eagle3 uses a different target model, so baseline TPS is not directly comparable across methods.</p>
+                  <p><strong>Interpretation:</strong> Even with serving overhead, DFlash’s block drafting sustains higher accepted throughput than autoregressive drafting, because it can propose many candidates per speculative step.</p>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Standalone TPU vs GPU DFlash</h3>
+              <div id="standalone-tpu-vs-gpu-chart" class="chart-container"></div>
+              <p class="chart-description">Standalone loop throughput comparison between TPU (this port) and GPU (paper) DFlash numbers. <button type="button" class="chart-view-more" aria-expanded="false" aria-controls="standalone-details">view more…</button></p>
+              <div id="standalone-details" class="chart-details-content chart-details-collapsed">
+                <p><strong>Standalone loop vs pipeline:</strong> Standalone measurements isolate the algorithm (prefill → draft → verify → accept) without vLLM scheduling, batching, or serving overhead.</p>
+                <p><strong>Port parity:</strong> Acceptance behavior tracks closely across hardware; remaining TPS gaps are typically attributable to platform-level characteristics rather than a change in decoding behavior.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="panel">
+              <h3>Acceptance Volume (τ × drafts/sec)</h3>
+              <div id="acceptance-analysis-chart" class="chart-container"></div>
+              <p class="chart-description">Accepted throughput decomposed as bar area = τ × drafts/sec. Height = τ; width = drafts/sec. <button type="button" class="chart-view-more" aria-expanded="false" aria-controls="acceptance-details">view more…</button></p>
+              <div id="acceptance-details" class="chart-details-content chart-details-collapsed">
+                <p><strong>Meaning:</strong> τ is the mean number of accepted tokens per speculative step; drafts/sec captures how many draft blocks the system can propose and verify per second. Their product equals accepted tokens/sec.</p>
+                  <p><strong>DFlash vs Eagle3:</strong> DFlash is designed to push τ higher by drafting a full block in parallel, while autoregressive drafters trade off smaller draft steps against additional sequential work.</p>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Acceptance Rate vs Position (GPU vs TPU)</h3>
+              <div id="acceptance-gpu-vs-tpu-chart" class="chart-container"></div>
+              <p class="chart-description">Per-position acceptance within the drafted block (positions 0-15), comparing GPU and TPU standalone runs. <button type="button" class="chart-view-more" aria-expanded="false" aria-controls="position-details">view more…</button></p>
+              <div id="position-details" class="chart-details-content chart-details-collapsed">
+                <p><strong>Standalone vs pipeline:</strong> Standalone curves avoid serving overhead and show cleaner acceptance dynamics. Acceptance typically decays with position as the draft gets further from the last verified token.</p>
+                <p><strong>GPU-TPU alignment:</strong> Similar per-position curves are a sanity check that the TPU port preserves the qualitative acceptance behavior reported on GPU.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="conclusion" class="section">
+        <div class="container">
+          <h2>Conclusion</h2>
+          <p>
+            We demonstrate that diffusion-based speculative decoding transfers effectively to TPU: the DFlash port maintains strong acceptance behavior, delivers meaningful acceleration in both standalone and serving-pipeline settings, and preserves output quality relative to baseline decoding.
+          </p>
+          <p>
+            Beyond reproducing results on a new hardware stack, this implementation provides a clean foundation for upstreaming into <code>tpu-inference</code> and for future work on faster kernels, concurrent serving benchmarks, and broader diffusion-based speculative decoding research on TPU.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <span>UCSD Data Science Capstone - DFlash on TPU</span>
+      </div>
+    </footer>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="js/dataLoader.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/replay.js"></script>
+    <script src="js/scrollTrigger.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

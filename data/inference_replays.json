@@ -1,0 +1,120 @@
+{
+  "samples": [
+    {
+      "dataset": "gsm8k",
+      "prompt": "Janet's ducks lay 16 eggs per day. She sells half of them and uses a quarter of the remainder for baking. How many eggs does she have left?",
+      "methods": {
+        "baseline": {
+          "output_text": "First, Janet has 16 eggs. She sells half: 16 / 2 = 8 eggs sold, so 8 remain. She uses a quarter of the remainder for baking: 8 / 4 = 2 eggs for baking. She has 8 - 2 = 6 eggs left. \\boxed{6}",
+          "tokens_per_second": 88,
+          "output_token_count": 92
+        },
+        "dflash_gpu": {
+          "output_text": "16 eggs total. Half sold: 8 remain. Quarter of 8 for baking: 2. Remaining: 8 - 2 = 6. \\boxed{6}",
+          "tokens_per_second": 318,
+          "output_token_count": 92,
+          "acceptance_lengths": [6, 5, 3, 16, 8, 4, 10, 2, 7, 5, 9, 3, 6, 4, 4]
+        },
+        "dflash_tpu": {
+          "output_text": "16 eggs. Sell half → 8 left. Use 1/4 of 8 for baking → 2. Remaining: 6. \\boxed{6}",
+          "tokens_per_second": 305,
+          "output_token_count": 92,
+          "acceptance_lengths": [5, 6, 4, 15, 7, 5, 9, 3, 8, 4, 10, 2, 6, 5, 3]
+        },
+        "eagle3": {
+          "output_text": "Half of 16 = 8. Quarter of 8 = 2. 8 - 2 = 6 eggs left. \\boxed{6}",
+          "tokens_per_second": 118,
+          "output_token_count": 94,
+          "acceptance_lengths": [12, 18, 16, 20, 28]
+        }
+      }
+    },
+    {
+      "dataset": "math500",
+      "prompt": "Solve: Find x if 3x + 7 = 40.",
+      "methods": {
+        "baseline": {
+          "output_text": "Subtract 7 from both sides: 3x = 33. Divide by 3: x = 11. \\boxed{11}",
+          "tokens_per_second": 93,
+          "output_token_count": 32
+        },
+        "dflash_gpu": {
+          "output_text": "3x + 7 = 40 → 3x = 33 → x = 11. \\boxed{11}",
+          "tokens_per_second": 335,
+          "output_token_count": 32,
+          "acceptance_lengths": [4, 3, 5, 2, 4, 3, 3, 4, 4]
+        },
+        "dflash_tpu": {
+          "output_text": "3x = 33, so x = 11. \\boxed{11}",
+          "tokens_per_second": 328,
+          "output_token_count": 32,
+          "acceptance_lengths": [5, 2, 4, 3, 4, 3, 4, 3, 4]
+        },
+        "eagle3": {
+          "output_text": "Solve: 3x = 33, so x = 11. Answer: \\boxed{11}.",
+          "tokens_per_second": 125,
+          "output_token_count": 34,
+          "acceptance_lengths": [10, 12, 12]
+        }
+      }
+    },
+    {
+      "dataset": "aime24",
+      "prompt": "Let n be the smallest positive integer such that n! is divisible by 2024. Find the remainder when n is divided by 10.",
+      "methods": {
+        "baseline": {
+          "output_text": "We have 2024 = 8 × 11 × 23. So n! must include 2^3, 11, and 23. The smallest n with 23 is n = 23. Check: 23! has 2^19, 11, 23. So n = 23, remainder 3. \\boxed{3}",
+          "tokens_per_second": 91,
+          "output_token_count": 128
+        },
+        "dflash_gpu": {
+          "output_text": "2024 = 8×11×23. Need n ≥ 23. For n = 23, 23! has factors 2^19, 11, 23. Thus n = 23, remainder \\boxed{3}.",
+          "tokens_per_second": 342,
+          "output_token_count": 128,
+          "acceptance_lengths": [8, 10, 6, 16, 9, 7, 11, 5, 12, 8, 9, 6, 11, 4, 6]
+        },
+        "dflash_tpu": {
+          "output_text": "2024 = 2^3 × 11 × 23. Smallest n with 23 is 23. 23! divisible by 2024. n mod 10 = 3. \\boxed{3}",
+          "tokens_per_second": 335,
+          "output_token_count": 128,
+          "acceptance_lengths": [7, 9, 7, 15, 8, 6, 10, 5, 11, 7, 10, 6, 12, 5, 5]
+        },
+        "eagle3": {
+          "output_text": "2024 = 8×11×23. n must be at least 23. So n = 23, remainder 3. \\boxed{3}",
+          "tokens_per_second": 122,
+          "output_token_count": 130,
+          "acceptance_lengths": [24, 28, 26, 25, 27]
+        }
+      }
+    },
+    {
+      "dataset": "aime25",
+      "prompt": "Find the number of ordered pairs (a, b) of positive integers such that a + b = 100 and gcd(a, b) = 5.",
+      "methods": {
+        "baseline": {
+          "output_text": "Let a = 5x, b = 5y with gcd(x,y)=1 and x+y=20. So we need coprime pairs (x,y) with x+y=20, x,y positive. Pairs: (1,19),(3,17),(7,13),(9,11) and symmetric. That gives 8. \\boxed{8}",
+          "tokens_per_second": 92,
+          "output_token_count": 156
+        },
+        "dflash_gpu": {
+          "output_text": "a=5x, b=5y, gcd(x,y)=1, x+y=20. Coprime pairs: (1,19),(3,17),(7,13),(9,11) plus reversals. Count: 8. \\boxed{8}",
+          "tokens_per_second": 348,
+          "output_token_count": 156,
+          "acceptance_lengths": [10, 12, 8, 16, 11, 9, 13, 7, 12, 8, 14, 9, 10, 7, 10]
+        },
+        "dflash_tpu": {
+          "output_text": "Write a=5x, b=5y. Then x+y=20, gcd(x,y)=1. Pairs (1,19),(3,17),(7,13),(9,11) and (19,1), etc. Answer: 8. \\boxed{8}",
+          "tokens_per_second": 340,
+          "output_token_count": 156,
+          "acceptance_lengths": [9, 11, 9, 15, 10, 8, 12, 7, 11, 9, 13, 8, 9, 7, 9]
+        },
+        "eagle3": {
+          "output_text": "a=5x, b=5y with x+y=20, gcd(x,y)=1. Valid (x,y): (1,19),(3,17),(7,13),(9,11) and symmetric. Total 8. \\boxed{8}",
+          "tokens_per_second": 119,
+          "output_token_count": 158,
+          "acceptance_lengths": [30, 32, 28, 34, 34]
+        }
+      }
+    }
+  ]
+}

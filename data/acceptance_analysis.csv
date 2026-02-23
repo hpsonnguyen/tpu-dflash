@@ -1,0 +1,5 @@
+method,tau,drafts_per_second,accepted_tps,dataset
+gpu_dflash_standalone,6.5,62,403,AVERAGE
+tpu_dflash_standalone,6.7,64,429,AVERAGE
+tpu_dflash_vllm,4.5,47,212,OVERALL
+tpu_eagle3_vllm,2.2,36,78,OVERALL
