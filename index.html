@@ -16,11 +16,13 @@
         </div>
         <nav class="nav">
           <a href="#overview">Overview</a>
-          <a href="#team">Team</a>
           <a href="#problem">Problem</a>
+          <a href="#background">Background</a>
           <a href="#methods">Methods</a>
           <a href="#results">Results</a>
+          <a href="#demo">Demo</a>
           <a href="#conclusion">Conclusion</a>
+          <a href="#team">Team</a>
         </nav>
       </div>
     </header>
@@ -44,58 +46,18 @@
             </div>
           </div>
           <div class="hero-card">
-            <div class="card-title">Key Outcome</div>
+            <div class="card-title">Key Outcomes</div>
             <div class="metric">
-              <div class="metric-value">100×</div>
-              <div class="metric-label">Best speedup (placeholder)</div>
+              <div class="metric-value">2.31×</div>
+              <div class="metric-label">vLLM pipeline speedup (DFlash vs baseline)</div>
             </div>
             <div class="metric">
-              <div class="metric-value">7.00</div>
-              <div class="metric-label">Final acceptance length τ (avg, placeholder)</div>
+              <div class="metric-value">3.01×</div>
+              <div class="metric-label">Standalone TPU v5p speedup (DFlash vs baseline, all benchmarks)</div>
             </div>
-            <div class="note">
-              🛠️ NOTE: All data in this website are placeholders and will be replaced with finalized benchmarks. The content and design of this website, especially the methods section, are still under construction.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="team" class="section team-section">
-        <div class="container">
-          <div class="team-core">
-            <h3 class="team-subheading">Team Members</h3>
-            <div class="team-grid">
-              <div class="team-card">
-                <div class="team-initial">A</div>
-                <div class="team-name">Aaron Feng</div>
-              </div>
-              <div class="team-card">
-                <div class="team-initial">Z</div>
-                <div class="team-name">Zhongyan Luo</div>
-              </div>
-              <div class="team-card">
-                <div class="team-initial">S</div>
-                <div class="team-name">Son Nguyen</div>
-              </div>
-              <div class="team-card">
-                <div class="team-initial">A</div>
-                <div class="team-name">Andy Huang</div>
-              </div>
-            </div>
-          </div>
-          <div class="team-advisors">
-            <h3 class="team-subheading">Advisors</h3>
-            <div class="team-grid team-grid-advisors">
-              <div class="team-card team-card-mentor">
-                <div class="team-initial">H</div>
-                <div class="team-name">Hao Zhang</div>
-                <div class="team-role">Mentor</div>
-              </div>
-              <div class="team-card team-card-ta">
-                <div class="team-initial">Y</div>
-                <div class="team-name">Yiming Zhao</div>
-                <div class="team-role">TA</div>
-              </div>
+            <div class="metric">
+              <div class="metric-value">&tau; = 5.4</div>
+              <div class="metric-label">Avg. accepted tokens per draft (standalone TPU v5p, all benchmarks)</div>
             </div>
           </div>
         </div>
@@ -109,23 +71,23 @@
             This sequential dependency makes long-form generations, especially chain-of-thought style reasoning, slow and expensive, because the target model must run once per output token.
           </p>
           <p>
-            <strong>Speculative decoding</strong> reduces this cost by splitting decoding into two stages:
-            a lightweight <em>draft</em> proposes a short continuation, and the full <em>target</em> model verifies those candidates in a single batched pass.
-            The key metric is the average acceptance length τ: how many draft tokens are accepted per verification step.
+            Our work ports DFlash from GPU/PyTorch to TPU/JAX inside <code>tpu-inference</code>, evaluates performance in both standalone and vLLM pipeline settings, compares against autoregressive drafting (Eagle3), and checks that output quality is preserved.
+          </p>
+        </div>
+      </section>
+
+      <section id="background" class="section">
+        <div class="container">
+          <h2>Background</h2>
+          <p>
+            <strong>Speculative decoding</strong> reduces the cost of autoregressive generation by splitting decoding into two stages:
+            a lightweight <em>draft</em> model proposes a short continuation, and the full <em>target</em> model verifies those candidates in a single batched pass.
+            The key metric is the average acceptance length &tau;: how many draft tokens are accepted per verification step.
           </p>
           <p>
             <strong>DFlash</strong> replaces sequential (autoregressive) drafting with a diffusion-style <em>block</em> drafter that predicts an entire fixed-size token block in one forward pass using non-causal attention.
-            That parallel, dense computation pattern aligns well with TPU hardware.
-            Our work ports DFlash from GPU/PyTorch to TPU/JAX inside <code>tpu-inference</code>, evaluates performance in both standalone and vLLM pipeline settings, compares against autoregressive drafting (Eagle3), and checks that output quality is preserved.
+            That parallel, dense computation pattern aligns well with TPU hardware, making it a natural candidate for porting.
           </p>
-
-        <div id="replay-section" class="panel" style="margin-top: 28px;">
-          <h3>Inference Demo</h3>
-          <p class="panel-subtitle">Pick a dataset prompt and compare decoded outputs and throughput across baseline decoding, DFlash (GPU/TPU), and Eagle3.</p>
-          <div id="replay-cards" class="replay-cards">
-            <p class="replay-placeholder">Scroll down to load replay samples…</p>
-          </div>
-        </div>
         </div>
       </section>
 
@@ -161,6 +123,21 @@
             We benchmark on the same four math reasoning datasets used in the DFlash paper (GSM8K, Math500, AIME24, AIME25), in both a standalone loop and the full vLLM serving pipeline.
             The charts below report throughput, acceptance behavior, and comparisons against autoregressive drafting (Eagle3).
           </p>
+
+          <div class="results-summary">
+            <div class="results-summary-item">
+              <div class="results-summary-value">2.31×</div>
+              <div class="results-summary-label">vLLM pipeline speedup (DFlash vs baseline)</div>
+            </div>
+            <div class="results-summary-item">
+              <div class="results-summary-value">3.01×</div>
+              <div class="results-summary-label">Standalone TPU v5p speedup (DFlash vs baseline, all benchmarks)</div>
+            </div>
+            <div class="results-summary-item">
+              <div class="results-summary-value">&tau; = 5.4</div>
+              <div class="results-summary-label">Avg. accepted tokens per draft (standalone TPU v5p, all benchmarks)</div>
+            </div>
+          </div>
 
           <div class="grid">
             <div class="panel">
@@ -206,6 +183,18 @@
         </div>
       </section>
 
+      <section id="demo" class="section">
+        <div class="container">
+          <h2>Inference Demo</h2>
+          <p>Pick a dataset prompt and compare decoded outputs and throughput across baseline decoding, DFlash (GPU/TPU), and Eagle3.</p>
+          <div id="replay-section" class="panel" style="margin-top: 20px;">
+            <div id="replay-cards" class="replay-cards">
+              <p class="replay-placeholder">Scroll down to load replay samples…</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="conclusion" class="section">
         <div class="container">
           <h2>Conclusion</h2>
@@ -215,6 +204,47 @@
           <p>
             Beyond reproducing results on a new hardware stack, this implementation provides a clean foundation for upstreaming into <code>tpu-inference</code> and for future work on faster kernels, concurrent serving benchmarks, and broader diffusion-based speculative decoding research on TPU.
           </p>
+        </div>
+      </section>
+      <section id="team" class="section team-section">
+        <div class="container">
+          <h2>Team</h2>
+          <div class="team-core">
+            <h3 class="team-subheading">Team Members</h3>
+            <div class="team-grid">
+              <div class="team-card">
+                <div class="team-initial">A</div>
+                <div class="team-name">Aaron Feng</div>
+              </div>
+              <div class="team-card">
+                <div class="team-initial">Z</div>
+                <div class="team-name">Zhongyan Luo</div>
+              </div>
+              <div class="team-card">
+                <div class="team-initial">S</div>
+                <div class="team-name">Son Nguyen</div>
+              </div>
+              <div class="team-card">
+                <div class="team-initial">A</div>
+                <div class="team-name">Andy Huang</div>
+              </div>
+            </div>
+          </div>
+          <div class="team-advisors">
+            <h3 class="team-subheading">Advisors</h3>
+            <div class="team-grid team-grid-advisors">
+              <div class="team-card team-card-mentor">
+                <div class="team-initial">H</div>
+                <div class="team-name">Hao Zhang</div>
+                <div class="team-role">Mentor</div>
+              </div>
+              <div class="team-card team-card-ta">
+                <div class="team-initial">Y</div>
+                <div class="team-name">Yiming Zhao</div>
+                <div class="team-role">TA</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>

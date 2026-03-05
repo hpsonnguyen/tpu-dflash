@@ -80,7 +80,7 @@ async function init() {
       }
       if (window.scrollTrigger && window.scrollTrigger.onScrollIntoView) {
         replayContainer.innerHTML = "<p class=\"replay-placeholder\">Scroll down to load replay samples…</p>";
-        window.scrollTrigger.onScrollIntoView("#replay-section", doRender);
+        window.scrollTrigger.onScrollIntoView("#demo", doRender);
       } else {
         doRender();
       }

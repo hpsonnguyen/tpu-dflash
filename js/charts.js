@@ -262,9 +262,19 @@
       series.push({ dataset: r.dataset, variant: r.variant, points: points });
     });
 
-    var dsColors = { gsm8k: COLORS.tpu, math500: COLORS.dflash, aime24: COLORS.eagle3, aime25: "#ef4444" };
+    var dsColors = {
+      gsm8k: COLORS.tpu, math500: COLORS.dflash, aime24: COLORS.eagle3, aime25: "#ef4444",
+      humaneval: "#6366f1", mbpp: "#14b8a6", "mt-bench": "#f97316", alpaca: "#ec4899", "swe-bench": "#78716c"
+    };
     var x = d3.scaleLinear().domain([0, 15]).range([0, width]);
     var y = d3.scaleLinear().domain([0, 1.05]).range([height, 0]);
+
+    var variants = series.reduce(function (acc, s) {
+      if (acc.indexOf(s.variant) < 0) acc.push(s.variant);
+      return acc;
+    }, []);
+    var hasGpu = variants.indexOf("gpu") >= 0;
+    var hasTpu = variants.indexOf("tpu") >= 0;
 
     d3.select(container).selectAll("*").remove();
     var legendHeight = 28;
@@ -282,6 +292,7 @@
     series.forEach(function (s) {
       var strokeColor = dsColors[s.dataset] || COLORS.baseline;
       var isGpu = s.variant === "gpu";
+      var useDash = hasGpu && hasTpu && isGpu;
       var path = g.append("path").datum(s.points)
         .attr("fill", "none")
         .attr("stroke", strokeColor)
@@ -295,14 +306,15 @@
         .transition().duration(defaultTransition)
         .attr("stroke-dashoffset", 0)
         .on("end", function () {
-          d3.select(this).attr("stroke-dasharray", isGpu ? "5,3" : "none");
+          d3.select(this).attr("stroke-dasharray", useDash ? "5,3" : "none");
         });
+      var variantLabel = s.variant ? s.variant.toUpperCase() : "";
       path.on("mousemove", function (ev) {
         var pt = d3.pointer(ev, g.node());
         var posIdx = Math.round(x.invert(pt[0]));
         if (posIdx >= 0 && posIdx <= 15 && s.points[posIdx] != null) {
           var p = s.points[posIdx];
-          showTooltip(container, s.dataset + " " + (isGpu ? "GPU" : "TPU") + ", pos " + p.pos + ": " + (p.rate * 100).toFixed(1) + "%", ev);
+          showTooltip(container, s.dataset + " " + variantLabel + ", pos " + p.pos + ": " + (p.rate * 100).toFixed(1) + "%", ev);
         }
       }).on("mouseleave", function () { hideTooltip(); });
     });
@@ -314,10 +326,12 @@
       return acc;
     }, []);
     var xOff = 0;
-    legend.append("text").attr("x", xOff).attr("y", 0).attr("font-size", 10).attr("font-weight", 600).text("GPU (dashed)");
-    xOff += 80;
-    legend.append("text").attr("x", xOff).attr("y", 0).attr("font-size", 10).attr("font-weight", 600).text("TPU (solid)");
-    xOff += 80;
+    if (hasGpu && hasTpu) {
+      legend.append("text").attr("x", xOff).attr("y", 0).attr("font-size", 10).attr("font-weight", 600).text("GPU (dashed)");
+      xOff += 80;
+      legend.append("text").attr("x", xOff).attr("y", 0).attr("font-size", 10).attr("font-weight", 600).text("TPU (solid)");
+      xOff += 80;
+    }
     datasets.forEach(function (ds) {
       legend.append("rect").attr("x", xOff).attr("y", -8).attr("width", 10).attr("height", 8).attr("fill", dsColors[ds] || COLORS.baseline);
       legend.append("text").attr("x", xOff + 14).attr("y", 0).attr("font-size", 10).text(ds);
