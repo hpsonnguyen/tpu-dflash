@@ -1,0 +1,247 @@
+\documentclass[12pt]{article}
+
+% ── Page geometry: 48" wide × 36" tall (landscape) ──────────────────────────
+\usepackage[paperwidth=48in, paperheight=36in, margin=1in]{geometry}
+
+% ── Packages ─────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath, amssymb}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{multicol}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{8pt}
+\setlength{\columnsep}{0.8in}
+
+% ── Colors ───────────────────────────────────────────────────────────────────
+\definecolor{navy}{HTML}{1e3a5f}
+\definecolor{indigo}{HTML}{6366f1}
+\definecolor{panelbg}{HTML}{eef2ff}
+\definecolor{darktext}{HTML}{0f172a}
+\definecolor{rose}{HTML}{f43f5e}
+
+% ── Section box command ──────────────────────────────────────────────────────
+\newcommand{\posterblock}[2]{%
+  \vspace{6pt}%
+  \noindent\colorbox{navy}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
+    \centering\color{white}\bfseries\Large #1}}%
+  \vspace{4pt}%
+  \par\noindent\fcolorbox{navy!30}{white}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+    \color{darktext}\normalsize #2}}%
+  \vspace{6pt}%
+}
+
+% ── Highlight box ────────────────────────────────────────────────────────────
+\newcommand{\highlightbox}[1]{%
+  \noindent\fcolorbox{indigo}{panelbg}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+    \centering #1}}%
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{document}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  HEADER
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{minipage}[t]{0.78\textwidth}
+  \vspace{0pt}
+  {\fontsize{60}{66}\selectfont\bfseries\color{navy}
+    Toward Accelerated LLM Inference:\\[8pt]
+    Porting and Evaluating Diffusion-Based\\[8pt]
+    Speculative Decoding on TPU\par}
+  \vspace{18pt}
+  {\LARGE
+    Aaron Feng\textsuperscript{1} \quad
+    Zhongyan Luo\textsuperscript{1} \quad
+    Son Nguyen\textsuperscript{1} \quad
+    Andy Huang\textsuperscript{1} \quad
+    Hao Zhang\textsuperscript{1}~(Mentor)\par}
+  \vspace{8pt}
+  {\Large \textsuperscript{1}Halıcıoğlu Data Science Institute, UC San Diego\par}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.18\textwidth}
+  \vspace{0pt}
+  \begin{center}
+    \fcolorbox{navy}{white}{\parbox{3.8in}{%
+      \centering
+      \vspace{8pt}
+      \includegraphics[width=3.2in]{figures/qrcode.png}\\[8pt]
+      {\Large\bfseries Project Website}\\[4pt]
+      {\normalsize\url{hpsonnguyen.github.io/tpu-dflash}}
+      \vspace{8pt}
+    }}
+  \end{center}
+\end{minipage}
+
+\vspace{0.3in}
+\noindent\rule{\textwidth}{4pt}
+\vspace{0.2in}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  THREE-COLUMN BODY
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{multicols}{3}
+
+% ──────────────────────────────────────────────────────────────────────────────
+%  LEFT COLUMN
+% ──────────────────────────────────────────────────────────────────────────────
+
+\posterblock{Problem \& Motivation}{%
+\begin{itemize}
+  \item LLM decoding is \textbf{inherently sequential}: generating $n$ tokens requires $n$ target-model forward passes.
+        Latency grows linearly with output length, making decoding the dominant bottleneck.
+  \item \textbf{Speculative decoding:} A lightweight \emph{draft model} proposes candidate tokens;
+        the full \emph{target model} verifies them all in one batched pass.
+        Good drafts $\Rightarrow$ multiple tokens accepted per verification step.
+  \item \textbf{Our contribution:} Port DFlash---a diffusion-based speculative decoding method---from
+        GPU/PyTorch to TPU/JAX inside the \texttt{tpu-inference} runtime.
+        Benchmarked on Qwen3-4B across 9 datasets (math, code, chat).
+  \item \textbf{TPU advantage:} Verification cost is \textbf{flat from $K$=16 to $K$=128} (0.97$\times$),
+        while GPU scales to 2.3$\times$. DFlash + TPU is the only combination where
+        \emph{both} draft and verification stay $O(1)$.
+\end{itemize}
+}
+
+\posterblock{Background}{%
+\textbf{Speculative Decoding}
+\begin{itemize}
+  \item Draft $n$ candidate tokens with a fast model; verify all at once via rejection sampling.
+  \item Key metric: $\tau$ = average accepted tokens per draft step. Higher $\tau$ = fewer expensive target calls.
+\end{itemize}
+
+\textbf{Draft Model Approaches}
+\begin{itemize}
+  \item \textbf{N-gram:} Non-neural, fast, but low $\tau$.
+  \item \textbf{Eagle3:} 1-layer autoregressive drafter. Good $\tau$, but $O(k)$ sequential passes for $k$ drafts.
+  \item \textbf{DFlash:} Diffusion-based \emph{block drafter}---predicts all 16 tokens in
+        \textbf{one forward pass} via non-causal attention. Draft cost is $O(1)$.
+\end{itemize}
+
+\textbf{DFlash Architecture}
+\begin{itemize}
+  \item 4-layer transformer with \textbf{non-causal block attention} (all 16 positions attend bidirectionally).
+  \item Reuses target model's embedding layer and LM head---no separate vocabulary projection.
+  \item Conditioned on target hidden states from layers [1, 9, 17, 25, 33], projected via FC + RMSNorm.
+  \item Trained on only 289K samples; outperforms Eagle3 (1.4M samples) in inference acceleration.
+\end{itemize}
+}
+
+% ──────────────────────────────────────────────────────────────────────────────
+%  CENTER COLUMN
+% ──────────────────────────────────────────────────────────────────────────────
+
+\posterblock{Methods: GPU $\rightarrow$ TPU Migration}{%
+\textbf{Key Engineering Steps}
+\begin{enumerate}
+  \item \textbf{Dual KV cache:} Paged KV (vLLM PagedAttention) for the target model; separate static
+        JAX KV cache with \texttt{dynamic\_update\_slice} for the draft model.
+  \item \textbf{Non-causal attention kernel:} Draft layers routed through TPU \texttt{flash\_attention}
+        with \texttt{causal=False}; target retains ragged paged causal attention.
+  \item \textbf{Sequence-length inflation fix:} \texttt{seq\_lens} included $\sim$15 unverified phantom
+        tokens per step, corrupting RoPE embeddings.
+        \emph{Fixing this single bug nearly doubled performance:}\\
+        $\tau$: 2.49 $\to$ 4.48 \quad Speedup: 1.30$\times$ $\to$ 2.31$\times$
+  \item \textbf{Target hidden-state extraction:} Hidden states from layers [1,9,17,25,33] concatenated
+        and projected via FC + RMSNorm as draft conditioning.
+  \item \textbf{Method registration:} DFlash integrated as a new \texttt{"dflash"} branch in
+        \texttt{tpu\_runner.py} with compilation prewarm support.
+\end{enumerate}
+
+The implementation preserves the full DFlash contract with \textbf{zero new vLLM dependencies}.
+}
+
+\posterblock{Results}{%
+\highlightbox{%
+  \vspace{4pt}
+  {\fontsize{36}{40}\selectfont\bfseries\color{navy} 2.31$\times$}~~{\large vLLM pipeline} \hfill
+  {\fontsize{36}{40}\selectfont\bfseries\color{navy} 3.01$\times$}~~{\large Standalone V5P} \hfill
+  {\fontsize{36}{40}\selectfont\bfseries\color{navy} $\tau$ = 5.42}~~{\large Avg.\ accepted}
+  \vspace{4pt}
+}
+
+\begin{itemize}
+  \item Benchmarked on Qwen3-4B + DFlash-b16 across \textbf{9 datasets} on TPU V5P (4 chips).
+  \item Math: \textbf{3.72$\times$} ($\tau$=6.71) ~|~ Code: \textbf{2.77$\times$} ($\tau$=5.09)
+        ~|~ Chat: \textbf{1.96$\times$} ($\tau$=3.37).
+  \item Peak: Math500 achieves \textbf{4.93$\times$} ($\tau$=8.80), \emph{exceeding} GPU paper $\tau$=7.84.
+  \item TPU achieves \textbf{94.9\%} of GPU paper $\tau$ on math benchmarks.
+\end{itemize}
+
+\begin{center}
+  \includegraphics[width=0.95\linewidth]{figures/summary_dashboard.pdf}
+\end{center}
+}
+
+% ──────────────────────────────────────────────────────────────────────────────
+%  RIGHT COLUMN
+% ──────────────────────────────────────────────────────────────────────────────
+
+\posterblock{Key Findings}{%
+\begin{minipage}[t]{0.48\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/tpu_vs_gpu_parity.pdf}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/acceptance_decay.pdf}
+\end{minipage}
+
+\vspace{6pt}
+\begin{itemize}
+  \item \textbf{Draft quality parity:} 94.9\% of GPU $\tau$; Math500 \emph{exceeds} GPU (112\%).
+  \item \textbf{Task difficulty:} Math maintains $>$70\% acceptance through position 8--10;
+        chat drops below 50\% by position 4--5.
+  \item \textbf{TPU verification is flat:} $K$=128/$K$=16 ratio = 0.97$\times$ on TPU vs 2.3$\times$ on GPU.
+\end{itemize}
+}
+
+\posterblock{Conclusion \& Future Work}{%
+\begin{minipage}[t]{0.48\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/cost_efficiency.pdf}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/profiling.pdf}
+\end{minipage}
+
+\vspace{6pt}
+\textbf{Conclusions}
+\begin{itemize}
+  \item DFlash on TPU: 3.01$\times$ standalone, 2.31$\times$ pipeline speedup.
+  \item Output quality preserved (bf16 divergence, not correctness errors).
+  \item Pipeline overhead---not model compute---is the remaining bottleneck.
+  \item TPU V5P + DFlash is the most cost-efficient inference option.
+\end{itemize}
+
+\textbf{Future Work}
+\begin{itemize}
+  \item \textbf{Wider blocks ($K$=64, 128):} Both draft and verify cost stay flat on TPU.
+  \item \textbf{vLLM optimization:} Close standalone--pipeline $\tau$ gap (6.67 vs 4.48).
+  \item \textbf{LM head fusion:} Two LM-head matmuls account for $\sim$30\% of step time.
+\end{itemize}
+}
+
+\posterblock{References \& Acknowledgements}{%
+\small
+\nocite{*}
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\vspace{6pt}
+\textbf{Acknowledgements:}
+We thank our mentor Hao Zhang and TA Yiming Zhao for their guidance,
+and the UCSD Halıcıoğlu Data Science Institute for supporting this DSC180B capstone project.
+}
+
+\end{multicols}
+
+\end{document}
