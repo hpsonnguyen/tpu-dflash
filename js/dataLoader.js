@@ -6,6 +6,11 @@ const DATA_FILES = {
   acceptanceAnalysis: "data/acceptance_analysis.csv",
   acceptanceGpuVsTpu: "data/acceptance_rate_gpu_vs_tpu_standalone.csv",
   replays: "data/inference_replays.json",
+  v5pStandaloneAll: "data/v5p_standalone_all_benchmarks.csv",
+  v5pVsGpuPaper: "data/v5p_standalone_vs_gpu_paper.csv",
+  v5pVsV4: "data/v5p_standalone_vs_v4.csv",
+  profilingGsm8k: "data/profiling_gsm8k.json",
+  v4StandaloneAll: "data/v4_standalone_all_benchmarks.csv",
 };
 
 const FALLBACK_REPLAYS = {
@@ -90,12 +95,20 @@ async function loadSafe(path, loader) {
 }
 
 async function loadData() {
-  const [vllmPipelineTps, standaloneTpuVsGpu, acceptanceAnalysis, acceptanceGpuVsTpu, replays] = await Promise.all([
+  const [
+    vllmPipelineTps, standaloneTpuVsGpu, acceptanceAnalysis, acceptanceGpuVsTpu, replays,
+    v5pStandaloneAll, v5pVsGpuPaper, v5pVsV4, profilingGsm8k, v4StandaloneAll
+  ] = await Promise.all([
     loadSafe(DATA_FILES.vllmPipelineTps, loadCSV),
     loadSafe(DATA_FILES.standaloneTpuVsGpu, loadCSV),
     loadSafe(DATA_FILES.acceptanceAnalysis, loadCSV),
     loadSafe(DATA_FILES.acceptanceGpuVsTpu, loadCSV),
     loadSafe(DATA_FILES.replays, loadJSON),
+    loadSafe(DATA_FILES.v5pStandaloneAll, loadCSV),
+    loadSafe(DATA_FILES.v5pVsGpuPaper, loadCSV),
+    loadSafe(DATA_FILES.v5pVsV4, loadCSV),
+    loadSafe(DATA_FILES.profilingGsm8k, loadJSON),
+    loadSafe(DATA_FILES.v4StandaloneAll, loadCSV),
   ]);
   return {
     vllmPipelineTps: vllmPipelineTps || [],
@@ -103,6 +116,11 @@ async function loadData() {
     acceptanceAnalysis: acceptanceAnalysis || [],
     acceptanceGpuVsTpu: acceptanceGpuVsTpu || [],
     replays: replays,
+    v5pStandaloneAll: v5pStandaloneAll || [],
+    v5pVsGpuPaper: v5pVsGpuPaper || [],
+    v5pVsV4: v5pVsV4 || [],
+    profilingGsm8k: profilingGsm8k || null,
+    v4StandaloneAll: v4StandaloneAll || [],
   };
 }
 
