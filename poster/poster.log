@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.20)  6 MAR 2026 15:36
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.20)  6 MAR 2026 15:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -482,104 +482,104 @@ Package hyperref Info: Link coloring ON on input line 62.
 <figures/hdsi-blue-gold.png, id=4, 369.0588pt x 79.9788pt>
 File: figures/hdsi-blue-gold.png Graphic file (type png)
 <use figures/hdsi-blue-gold.png>
-Package pdftex.def Info: figures/hdsi-blue-gold.png  used on input line 98.
+Package pdftex.def Info: figures/hdsi-blue-gold.png  used on input line 99.
 (pdftex.def)             Requested size: 216.81pt x 46.98572pt.
-LaTeX Font Info:    Calculating math sizes for size <24> on input line 98.
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 98.
+LaTeX Font Info:    Calculating math sizes for size <24> on input line 99.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 99.
  (c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 98.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 99.
  (c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 98.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 99.
  (c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 98.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 99.
  (c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <24> on input line 98.
+(Font)              <24> on input line 99.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <16.79993> on input line 98.
+(Font)              <16.79993> on input line 99.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 98.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 98.
+(Font)              <12> on input line 99.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 99.
  (c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 98.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 99.
  (c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Calculating math sizes for size <26> on input line 98.
+LaTeX Font Info:    Calculating math sizes for size <26> on input line 99.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <26> on input line 98.
+(Font)              <26> on input line 99.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <18.19992> on input line 98.
+(Font)              <18.19992> on input line 99.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <13> on input line 98.
-LaTeX Font Info:    Calculating math sizes for size <22> on input line 98.
+(Font)              <13> on input line 99.
+LaTeX Font Info:    Calculating math sizes for size <22> on input line 99.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <22> on input line 98.
+(Font)              <22> on input line 99.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <15.39993> on input line 98.
+(Font)              <15.39993> on input line 99.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <11> on input line 98.
+(Font)              <11> on input line 99.
 <figures/qrcode.png, id=6, 823.075pt x 823.075pt>
 File: figures/qrcode.png Graphic file (type png)
 <use figures/qrcode.png>
-Package pdftex.def Info: figures/qrcode.png  used on input line 98.
+Package pdftex.def Info: figures/qrcode.png  used on input line 99.
 (pdftex.def)             Requested size: 173.44756pt x 173.44112pt.
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 117.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 118.
  (c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 124.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 125.
  (c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Calculating math sizes for size <32> on input line 165.
+LaTeX Font Info:    Calculating math sizes for size <32> on input line 166.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <32> on input line 165.
+(Font)              <32> on input line 166.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <22.3999> on input line 165.
+(Font)              <22.3999> on input line 166.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <16> on input line 165.
-LaTeX Font Info:    Calculating math sizes for size <42> on input line 199.
+(Font)              <16> on input line 166.
+LaTeX Font Info:    Calculating math sizes for size <42> on input line 200.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <42> on input line 199.
+(Font)              <42> on input line 200.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <29.39987> on input line 199.
+(Font)              <29.39987> on input line 200.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <21> on input line 199.
+(Font)              <21> on input line 200.
 <figures/summary_dashboard.pdf, id=7, 720.60655pt x 299.48067pt>
 File: figures/summary_dashboard.pdf Graphic file (type pdf)
 <use figures/summary_dashboard.pdf>
-Package pdftex.def Info: figures/summary_dashboard.pdf  used on input line 203.
+Package pdftex.def Info: figures/summary_dashboard.pdf  used on input line 204.
 (pdftex.def)             Requested size: 1112.9583pt x 462.60455pt.
 <figures/tpu_vs_gpu_parity.pdf, id=8, 431.55605pt x 286.34227pt>
 File: figures/tpu_vs_gpu_parity.pdf Graphic file (type pdf)
 <use figures/tpu_vs_gpu_parity.pdf>
-Package pdftex.def Info: figures/tpu_vs_gpu_parity.pdf  used on input line 227.
+Package pdftex.def Info: figures/tpu_vs_gpu_parity.pdf  used on input line 228.
 (pdftex.def)             Requested size: 1057.30698pt x 701.62335pt.
 <figures/acceptance_decay.pdf, id=9, 503.80347pt x 286.44766pt>
 File: figures/acceptance_decay.pdf Graphic file (type pdf)
 <use figures/acceptance_decay.pdf>
-Package pdftex.def Info: figures/acceptance_decay.pdf  used on input line 249.
+Package pdftex.def Info: figures/acceptance_decay.pdf  used on input line 250.
 (pdftex.def)             Requested size: 1112.9583pt x 632.85738pt.
 <figures/cost_efficiency.pdf, id=10, 649.70647pt x 323.01563pt>
 File: figures/cost_efficiency.pdf Graphic file (type pdf)
 <use figures/cost_efficiency.pdf>
-Package pdftex.def Info: figures/cost_efficiency.pdf  used on input line 269.
+Package pdftex.def Info: figures/cost_efficiency.pdf  used on input line 270.
 (pdftex.def)             Requested size: 534.21523pt x 265.59906pt.
 <figures/profiling.pdf, id=11, 404.45448pt x 256.97507pt>
 File: figures/profiling.pdf Graphic file (type pdf)
 <use figures/profiling.pdf>
-Package pdftex.def Info: figures/profiling.pdf  used on input line 273.
+Package pdftex.def Info: figures/profiling.pdf  used on input line 274.
 (pdftex.def)             Requested size: 534.21523pt x 339.43164pt.
  (./poster.bbl
 LaTeX Font Info:    Calculating math sizes for size <20> on input line 22.
@@ -602,13 +602,13 @@ Package rerunfilecheck Info: File `poster.out' has not changed.
 Here is how much of TeX's memory you used:
  11689 strings out of 471606
  183926 string characters out of 5519141
- 611133 words of memory out of 5000000
+ 611178 words of memory out of 5000000
  38066 multiletter control sequences out of 15000+600000
  767285 words of font info for 157 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,9n,79p,311b,649s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi12.pfb><c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb><c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
-Output written on poster.pdf (1 page, 277904 bytes).
+Output written on poster.pdf (1 page, 277918 bytes).
 PDF statistics:
  495 PDF objects out of 1000 (max. 8388607)
  94 compressed objects within 1 object stream
