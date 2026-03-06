@@ -1,6 +1,6 @@
 /** replay.js - Render replay cards from samples */
 
-var METHOD_ORDER = ["baseline", "dflash_gpu", "dflash_tpu", "eagle3"];
+var METHOD_ORDER = ["baseline", "dflash_tpu"];
 
 function renderSingleCard(sample, samples, selectedIdx, onDatasetChange) {
   var methods = sample.methods || {};

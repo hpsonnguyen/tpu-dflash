@@ -124,11 +124,11 @@ def build_vllm_pipeline_tps():
 # ---------------------------------------------------------------------------
 
 def build_standalone_tpu_vs_gpu():
-    """Build TPU vs GPU standalone comparison from all v5p results.
+    """Build TPU vs GPU standalone comparison from v5p results.
 
-    Source: results/v5p/standalone_all_benchmarks.csv (all 9 datasets)
-    GPU DFlash TPS is derived from paper speedup * estimated GPU baseline TPS
-    (only available for math datasets).
+    Only includes datasets where GPU paper data exists (math datasets).
+    Source: results/v5p/standalone_all_benchmarks.csv, filtered to MATH_DATASETS.
+    GPU DFlash TPS is derived from paper speedup * estimated GPU baseline TPS.
     """
     data = fetch_csv("results/v5p/standalone_all_benchmarks.csv")
     if not data:
@@ -137,14 +137,16 @@ def build_standalone_tpu_vs_gpu():
     rows = []
     for r in data:
         ds = r["dataset"].strip()
+        if ds not in GPU_PAPER:
+            continue
         tpu_bl = round(float(r["tpu_baseline_tps"]), 1)
         tpu_df = round(float(r["tpu_dflash_tps"]), 1)
         tpu_spd = round(float(r["tpu_speedup"]), 2)
 
-        gpu_ref = GPU_PAPER.get(ds, {})
-        gpu_spd = gpu_ref.get("speedup", 0)
-        gpu_bl = gpu_ref.get("baseline_tps", 73.8)
-        gpu_df = round(gpu_spd * gpu_bl, 1) if gpu_spd else ""
+        gpu_ref = GPU_PAPER[ds]
+        gpu_spd = gpu_ref["speedup"]
+        gpu_bl = gpu_ref["baseline_tps"]
+        gpu_df = round(gpu_spd * gpu_bl, 1)
 
         rows.append({
             "dataset": ds,
@@ -152,19 +154,18 @@ def build_standalone_tpu_vs_gpu():
             "tpu_dflash_tps": tpu_df,
             "gpu_dflash_tps": gpu_df,
             "tpu_speedup": tpu_spd,
-            "gpu_speedup": round(gpu_spd, 2) if gpu_spd else "",
+            "gpu_speedup": round(gpu_spd, 2),
         })
 
     if rows:
         n = len(rows)
-        gpu_rows = [r for r in rows if r["gpu_dflash_tps"] != ""]
         rows.append({
             "dataset": "AVERAGE",
             "tpu_baseline_tps": round(sum(r["tpu_baseline_tps"] for r in rows) / n, 1),
             "tpu_dflash_tps": round(sum(r["tpu_dflash_tps"] for r in rows) / n, 1),
-            "gpu_dflash_tps": round(sum(r["gpu_dflash_tps"] for r in gpu_rows) / len(gpu_rows), 1) if gpu_rows else "",
+            "gpu_dflash_tps": round(sum(r["gpu_dflash_tps"] for r in rows) / n, 1),
             "tpu_speedup": round(sum(r["tpu_speedup"] for r in rows) / n, 2),
-            "gpu_speedup": round(sum(r["gpu_speedup"] for r in gpu_rows) / len(gpu_rows), 2) if gpu_rows else "",
+            "gpu_speedup": round(sum(r["gpu_speedup"] for r in rows) / n, 2),
         })
 
     return rows
