@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.20)  6 MAR 2026 15:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.20)  6 MAR 2026 15:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -582,13 +582,13 @@ File: figures/profiling.pdf Graphic file (type pdf)
 Package pdftex.def Info: figures/profiling.pdf  used on input line 274.
 (pdftex.def)             Requested size: 534.21523pt x 339.43164pt.
  (./poster.bbl
-LaTeX Font Info:    Calculating math sizes for size <20> on input line 22.
+LaTeX Font Info:    Calculating math sizes for size <20> on input line 12.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <20> on input line 22.
+(Font)              <20> on input line 12.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <13.99994> on input line 22.
+(Font)              <13.99994> on input line 12.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 22.
+(Font)              <10> on input line 12.
 ) [1
 
 {c:/Users/final/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc} <./figures/hdsi-blue-gold.png> <./figures/qrcode.png (PNG copy)> <./figures/summary_dashboard.pdf> <./figures/tpu_vs_gpu_parity.pdf> <./figures/acceptance_decay.pdf> <./figures/cost_efficiency.pdf> <./figures/profiling.pdf>] (./poster.aux)
@@ -602,13 +602,13 @@ Package rerunfilecheck Info: File `poster.out' has not changed.
 Here is how much of TeX's memory you used:
  11689 strings out of 471606
  183926 string characters out of 5519141
- 611178 words of memory out of 5000000
+ 611223 words of memory out of 5000000
  38066 multiletter control sequences out of 15000+600000
  767285 words of font info for 157 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,9n,79p,311b,649s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi12.pfb><c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb><c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/final/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
-Output written on poster.pdf (1 page, 277918 bytes).
+Output written on poster.pdf (1 page, 278853 bytes).
 PDF statistics:
  495 PDF objects out of 1000 (max. 8388607)
  94 compressed objects within 1 object stream

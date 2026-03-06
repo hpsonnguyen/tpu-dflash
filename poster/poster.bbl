@@ -5,6 +5,12 @@
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
+\bibitem[Chen et~al.(2026)Chen, Liang, and Liu]{dflash2026}
+Jian Chen, Yesheng Liang, and Zhijian Liu.
+\newblock {DFlash}: Block diffusion for flash speculative decoding.
+\newblock \emph{arXiv preprint arXiv:2602.06036}, 2026.
+\newblock \url{https://arxiv.org/abs/2602.06036}.
+
 \bibitem[Kwon et~al.(2023)Kwon, Li, Zhuang, Sheng, Zheng, Yu, Gonzalez, Zhang, and Stoica]{vllm2023}
 Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody~Hao Yu, Joseph~E Gonzalez, Hao Zhang, and Ion Stoica.
 \newblock {vLLM}: Efficient memory management for large language model serving with {PagedAttention}.
@@ -14,11 +20,5 @@ Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody~Hao Yu, 
 Yuhui Li, Fangyun Wei, Chao Zhang, and Hongyang Zhang.
 \newblock {EAGLE-3}: Scaling up speculative sampling requires rethinking draft model training.
 \newblock In \emph{arXiv preprint arXiv:2503.01840}, 2025.
-
-\bibitem[Zhang et~al.(2025)]{dflash2025}
-Hao Zhang et~al.
-\newblock {DFlash}: Accelerating autoregressive inference with diffusion-based speculative decoding.
-\newblock \emph{arXiv preprint}, 2025.
-\newblock \url{https://github.com/z-lab/DFlash}.
 
 \end{thebibliography}
