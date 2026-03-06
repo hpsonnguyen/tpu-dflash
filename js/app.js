@@ -44,7 +44,9 @@ function initCarousel(data) {
   var current = 0;
   var total = slides.length;
 
-  function goTo(idx) {
+  var carouselEl = document.getElementById("chart-carousel");
+
+  function goTo(idx, scroll) {
     slides[current].classList.remove("active");
     current = idx;
     slides[current].classList.add("active");
@@ -52,10 +54,16 @@ function initCarousel(data) {
     nextBtn.disabled = current === total - 1;
     indicator.textContent = (current + 1) + " / " + total;
     renderChart(current, data);
+    if (scroll && carouselEl) {
+      var header = document.querySelector(".site-header");
+      var offset = header ? header.offsetHeight + 16 : 16;
+      var top = carouselEl.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({ top: top, behavior: "smooth" });
+    }
   }
 
-  prevBtn.addEventListener("click", function () { if (current > 0) goTo(current - 1); });
-  nextBtn.addEventListener("click", function () { if (current < total - 1) goTo(current + 1); });
+  prevBtn.addEventListener("click", function () { if (current > 0) goTo(current - 1, true); });
+  nextBtn.addEventListener("click", function () { if (current < total - 1) goTo(current + 1, true); });
 
   renderChart(0, data);
   prevBtn.disabled = true;
