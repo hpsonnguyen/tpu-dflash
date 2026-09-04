@@ -5,7 +5,7 @@ const DATA_FILES = {
   standaloneTpuVsGpu: "data/standalone_tpu_vs_gpu_tps.csv",
   acceptanceAnalysis: "data/acceptance_analysis.csv",
   acceptanceGpuVsTpu: "data/acceptance_rate_gpu_vs_tpu_standalone.csv",
-  replays: "data/inference_replays.json",
+  replays: "data/inference_replays.json?v=5",
   v5pStandaloneAll: "data/v5p_standalone_all_benchmarks.csv",
   v5pVsGpuPaper: "data/v5p_standalone_vs_gpu_paper.csv",
   v5pVsV4: "data/v5p_standalone_vs_v4.csv",

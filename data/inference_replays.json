@@ -1,140 +1,19 @@
 {
   "samples": [
     {
-      "dataset": "gsm8k",
-      "sample_idx": 1,
-      "prompt": "[gsm8k sample 1]",
-      "methods": {
-        "baseline": {
-          "output_text": "[Baseline output - 256 tokens]",
-          "tokens_per_second": 152.4,
-          "output_token_count": 256
-        },
-        "dflash_tpu": {
-          "output_text": "[DFlash TPU output - 256 tokens]",
-          "tokens_per_second": 397.8,
-          "output_token_count": 256,
-          "acceptance_lengths": [
-            4,
-            2,
-            2,
-            5,
-            6,
-            4,
-            4,
-            2,
-            1,
-            1,
-            7,
-            8,
-            4,
-            2,
-            4,
-            12,
-            16,
-            5,
-            3,
-            3,
-            1,
-            3,
-            9,
-            1,
-            6,
-            16,
-            12,
-            8,
-            1,
-            1,
-            12,
-            5,
-            10,
-            2,
-            3,
-            1,
-            4,
-            10,
-            8,
-            4,
-            2,
-            5,
-            4,
-            2,
-            4,
-            5,
-            7,
-            8,
-            2,
-            4,
-            2
-          ]
-        }
-      }
-    },
-    {
-      "dataset": "math500",
-      "sample_idx": 1,
-      "prompt": "[math500 sample 1]",
-      "methods": {
-        "baseline": {
-          "output_text": "[Baseline output - 256 tokens]",
-          "tokens_per_second": 155.4,
-          "output_token_count": 256
-        },
-        "dflash_tpu": {
-          "output_text": "[DFlash TPU output - 256 tokens]",
-          "tokens_per_second": 634.8,
-          "output_token_count": 256,
-          "acceptance_lengths": [
-            3,
-            2,
-            4,
-            16,
-            14,
-            4,
-            5,
-            6,
-            7,
-            14,
-            6,
-            3,
-            16,
-            7,
-            2,
-            16,
-            16,
-            6,
-            3,
-            16,
-            16,
-            12,
-            16,
-            11,
-            1,
-            4,
-            10,
-            3,
-            7,
-            4,
-            5,
-            16
-          ]
-        }
-      }
-    },
-    {
       "dataset": "aime24",
-      "sample_idx": 1,
-      "prompt": "[aime24 sample 1]",
+      "prompt": "Let $\\triangle ABC$ have circumcenter $O$ and incenter $I$ with $\\overline{IA}\\perp\\overline{OI}$, circumradius $13$, and inradius $6$. Find $AB\\cdot AC$.",
       "methods": {
         "baseline": {
-          "output_text": "[Baseline output - 256 tokens]",
-          "tokens_per_second": 157.5,
-          "output_token_count": 256
+          "output_text": "We are given a triangle  with:\n\n- Circumcenter \n- Incenter \n- - Circumradius \n- Inradius \n\nWe are to find the value of .\n\nStep 1: Use the given perpendicularity condition\n\nWe are told that:\n\nThis is a geometric condition that relates the incenter , circumcenter , and vertex .\n\nThis is a known geometric condition that occurs in certain types of triangles, and it can be used to relate the sides of the triangle.\n\nLet’s denote:\n\n- - - We are to find \n\nStep 2: Use known formulas involving inradius, circumradius, and triangle area\n\nWe know the following formulas:\n\n- Area of triangle , where  is the semiperimeter\n- Also, , where  is the circumradius\n\nSo:\n\nSubstitute , :\n\nStep 3: Use the perpendicularity condition\n\nWe are told that \n\nThis is a special condition that occurs in isosceles triangles or in certain types of triangles where the incenter and circumcenter are related in a specific way.\n\nIn fact, this condition is known to occur in isosceles triangles with , i.e., when the triangle is isosceles with .\n\nSo, we can assume that triangle  is isosceles with , i.e., \n\nLet’s denote:\n\n- - Then the triangle is isosceles with base , and equal sides \n\nSo, the triangle is symmetric about the altitude from  to \n\nStep 4: Use the formula for the inradius in an isosceles triangle\n\nIn an isosceles triangle with sides , , the inradius is:\n\nBut this is not the most useful form. Instead, we can use the standard formula:\n\nWhere  is the area, and \n\nAlso, the area of an isosceles triangle is:\n\nWhere  is the height from  to \n\nUsing Pythagoras:\n\nSo:\n\nAlso, the semiperimeter is:\n\nSo:\n\nLet’s simplify this expression.\n\nMultiply numerator and denominator by 2:\n\nLet’s square both sides to eliminate the square root:\n\nMultiply both sides by :\n\nThis is a complicated equation, but we can try to find integer solutions that satisfy the given circumradius \n\nStep 5: Use the formula for circumradius in an isosceles triangle\n\nIn an isosceles triangle with sides , , the circumradius is:\n\nSo:\n\nLet’s square both sides:\n\nMultiply both sides by the denominator:\n\nMultiply numerator and denominator by 4:\n\nNow we have two equations:\n\n- Equation (4): \n- Equation (5): \n\nLet’s try to find integer values of  and  that satisfy both.\n\nTry , \n\nCheck equation (5):\n\nToo small.\n\nTry , \n\nStill too small.\n\nTry , \n\nStill too small.\n\nTry , \n\nStill too small.\n\nTry , \n\n\\frac{20^2 \\cdot 13^2}{4 \\cdot 13^2 - 20^2} = \\frac{400 \\cdot 1",
+          "tokens_per_second": 140.0,
+          "output_token_count": 2048,
+          "total_time_ms": 14631.8
         },
         "dflash_tpu": {
-          "output_text": "[DFlash TPU output - 256 tokens]",
-          "tokens_per_second": 436.8,
-          "output_token_count": 256,
+          "output_text": "We are given a triangle  with:\n\n- Circumcenter \n- Incenter \n- - Circumradius \n- Inradius \n\nWe are to find the value of .\n\nStep 1: Use the given perpendicularity condition\n\nWe are told that:\n\nThis is a geometric condition that relates the incenter , circumcenter , and vertex .\n\nThis is a known geometric condition that occurs in certain types of triangles, and it can be used to relate the sides of the triangle.\n\nLet’s denote:\n\n- - - We are to find \n\nStep 2: Use known formulas involving inradius, circumradius, and triangle area\n\nWe know the following formulas:\n\n- Area of triangle , where  is the semiperimeter\n- Also, , where  is the circumradius\n\nSo:\n\nSubstitute , :\n\nStep 3: Use the perpendicularity condition\n\nWe are told that \n\nThis is a special condition that occurs in isosceles triangles or in certain types of triangles where the incenter and circumcenter are related in a specific way.\n\nIn fact, this condition is known to occur in isosceles triangles with , i.e., when the triangle is isosceles with .\n\nSo, we can assume that triangle  is isosceles with , and we are to find .\n\nLet’s denote:\n\n- - Then the triangle is isosceles with sides \n\nSo, the semiperimeter is:\n\nThe area is:\n\nAlso, the area can be written as:\n\nSo equating the two expressions for area:\n\nMultiply both sides by 52:\n\nStep 4: Use the Law of Cosines or other relations\n\nIn an isosceles triangle with , the angle at  is , and the base is .\n\nWe can use the Law of Cosines:\n\nBut we can also use the formula for the circumradius in terms of the sides:\n\nSo:\n\nThen:\n\nSo:\n\nThis is getting complicated. Let’s try to solve equation (2) directly.\n\nStep 5: Solve equation (2)\n\nRecall:\n\nLet’s try to find integer solutions for  and  that satisfy this.\n\nTry , then:\n\nSo:\n\nSo, , \n\nThen:\n\n✅ Final Answer:",
+          "tokens_per_second": 554.7,
+          "output_token_count": 1222,
           "acceptance_lengths": [
             7,
             11,
@@ -181,25 +60,892 @@
             1,
             4,
             13,
-            11
-          ]
+            11,
+            5,
+            7,
+            7,
+            5,
+            16,
+            12,
+            16,
+            8,
+            1,
+            6,
+            1,
+            5,
+            14,
+            4,
+            4,
+            16,
+            4,
+            3,
+            2,
+            6,
+            2,
+            1,
+            3,
+            7,
+            1,
+            4,
+            3,
+            6,
+            1,
+            2,
+            3,
+            10,
+            3,
+            1,
+            3,
+            9,
+            5,
+            4,
+            16,
+            1,
+            1,
+            7,
+            3,
+            5,
+            4,
+            10,
+            6,
+            7,
+            2,
+            6,
+            2,
+            12,
+            16,
+            5,
+            9,
+            5,
+            13,
+            12,
+            2,
+            5,
+            10,
+            4,
+            6,
+            16,
+            11,
+            12,
+            16,
+            13,
+            16,
+            5,
+            8,
+            3,
+            2,
+            2,
+            12,
+            5,
+            1,
+            2,
+            5,
+            8,
+            7,
+            8,
+            7,
+            13,
+            5,
+            5,
+            3,
+            3,
+            4,
+            8,
+            2,
+            1,
+            3,
+            6,
+            1,
+            10,
+            13,
+            15,
+            13,
+            4,
+            16,
+            13,
+            15,
+            3,
+            2,
+            2,
+            4,
+            9,
+            4,
+            16,
+            4,
+            5,
+            3,
+            1,
+            10,
+            1,
+            7,
+            12,
+            15,
+            9,
+            16,
+            6,
+            2,
+            13,
+            12,
+            1,
+            10,
+            16,
+            7,
+            4,
+            16,
+            16,
+            9,
+            10,
+            16,
+            12
+          ],
+          "step_timestamps": [
+            {
+              "ms": 12.103,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 24.207,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 36.31,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 48.413,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 60.517,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 72.62,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 84.723,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 96.827,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 108.93,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 121.033,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 133.137,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 145.24,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 157.343,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 169.447,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 181.55,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 193.653,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 205.757,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 217.86,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 229.963,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 242.067,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 254.17,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 266.273,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 278.377,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 290.48,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 302.583,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 314.687,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 326.79,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 338.893,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 350.997,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 363.1,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 375.203,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 387.307,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 399.41,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 411.513,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 423.617,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 435.72,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 447.823,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 459.927,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 472.03,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 484.133,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 496.237,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 508.34,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 520.443,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 532.547,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 544.65,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 556.753,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 568.857,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 580.96,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 593.063,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 605.167,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 617.27,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 629.373,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 641.477,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 653.58,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 665.683,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 677.787,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 689.89,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 701.993,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 714.097,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 726.2,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 738.303,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 750.407,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 762.51,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 774.613,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 786.717,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 798.82,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 810.923,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 823.027,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 835.13,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 847.233,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 859.337,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 871.44,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 883.543,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 895.647,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 907.75,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 919.853,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 931.957,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 944.06,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 956.163,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 968.267,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 980.37,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 992.473,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 1004.577,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1016.68,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1028.783,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1040.887,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1052.99,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1065.093,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 1077.197,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1089.3,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1101.403,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1113.507,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 1125.61,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 1137.713,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 1149.817,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1161.92,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 1174.023,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1186.127,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 1198.23,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1210.333,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1222.437,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 1234.54,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1246.643,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 1258.747,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 1270.85,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1282.953,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1295.057,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 1307.16,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1319.263,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 1331.367,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1343.47,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 1355.573,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 1367.677,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1379.78,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 1391.883,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1403.987,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1416.09,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 1428.193,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1440.297,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1452.4,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1464.503,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 1476.607,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1488.71,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1500.813,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1512.917,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1525.02,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 1537.123,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 1549.227,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 1561.33,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 1573.433,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 1585.537,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1597.64,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1609.743,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1621.847,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1633.95,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1646.053,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 1658.157,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1670.26,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1682.363,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1694.467,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 1706.57,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1718.673,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 1730.777,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 1742.88,
+              "tokens_accepted": 15
+            },
+            {
+              "ms": 1754.983,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 1767.087,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1779.19,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1791.293,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 1803.397,
+              "tokens_accepted": 15
+            },
+            {
+              "ms": 1815.5,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1827.603,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1839.707,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1851.81,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1863.913,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 1876.017,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1888.12,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1900.223,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1912.327,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1924.43,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1936.533,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1948.637,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 1960.74,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1972.843,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 1984.947,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 1997.05,
+              "tokens_accepted": 15
+            },
+            {
+              "ms": 2009.153,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 2021.257,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 2033.36,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 2045.463,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2057.567,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 2069.67,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 2081.773,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2093.877,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 2105.98,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 2118.083,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 2130.187,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 2142.29,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 2154.393,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 2166.497,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 2178.6,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 2190.703,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 2202.807,
+              "tokens_accepted": 12
+            }
+          ],
+          "total_time_ms": 2202.8
         }
       }
     },
     {
       "dataset": "aime25",
-      "sample_idx": 1,
-      "prompt": "[aime25 sample 1]",
+      "prompt": "Find the sum of all positive integers $n$ such that $n+2$ divides the product $3(n+3)(n^2+9)$.",
       "methods": {
         "baseline": {
-          "output_text": "[Baseline output - 256 tokens]",
-          "tokens_per_second": 153.0,
-          "output_token_count": 256
+          "output_text": "We are given the expression:\n\nWe are told that this is an integer, and we are to find the sum of all positive integers  such that this is true.\n\nStep 1: Understand the condition\n\nWe are told that:\n\nThis means that  divides the product .\n\nLet’s denote:\n\nWe want to find all positive integers  such that .\n\nStep 2: Use polynomial division or modular arithmetic\n\nWe can write:\n\nWe want to find all  such that:\n\nThis is equivalent to:\n\nSo we can compute , and set it to 0.\n\nLet’s compute .\n\nStep 3: Use substitution\n\nLet’s set , so \n\nThen:\n\nSimplify:\n\nSo we want:\n\nThis is true for all , because , and  is always true.\n\nBut we are only interested in positive integers  such that , i.e., , and  is a positive integer.\n\nSo we want to find all positive integers  such that:\n\nBut this is always true, so we need to find all positive integers  such that  is positive, i.e., .\n\nSo we want to find all positive integers  such that:\n\nBut this is always true, so we need to find all positive integers  such that  is a positive integer, and .\n\nSo we can just find all positive integers  such that , and sum them.\n\nStep 4: Try small values of \n\nLet’s try small values of  and check whether .\n\nLet’s define:\n\nWe want to check whether .\n\nTry :\n\n- - - → Yes\n\nTry :\n\n- - - ? 195 ÷ 4 = 48.75 → No\n\nTry :\n\n- - - ? 324 ÷ 5 = 64.8 → No\n\nTry :\n\n- - - ? 525 ÷ 6 = 87.5 → No\n\nTry :\n\n- - - ? 816 ÷ 7 = 116.57 → No\n\nTry :\n\n- - - ? 1215 ÷ 8 = 151.875 → No\n\nTry :\n\n- - - ? 1740 ÷ 9 = 193.33 → No\n\nTry :\n\n- - - ? 2379 ÷ 10 = 237.9 → No\n\nTry :\n\n- - - ? 3240 ÷ 11 = 294.545 → No\n\nTry :\n\n- - - ? 4101 ÷ 12 = 341.75 → No\n\nTry :\n\n- - - ? 5460 ÷ 13 = 420 → Yes\n\nSo  is a solution.\n\nTry :\n\n- - - ? 6885 ÷ 14 = 491.785 → No\n\nTry :\n\n- - - ? 8496 ÷ 15 = 566.4 → No\n\nTry :\n\n- - - ? 10545 ÷ 16 = 659.0625 → No\n\nTry :\n\n- $ n + 2",
+          "tokens_per_second": 141.4,
+          "output_token_count": 2048,
+          "total_time_ms": 14484.4
         },
         "dflash_tpu": {
-          "output_text": "[DFlash TPU output - 256 tokens]",
-          "tokens_per_second": 608.7,
-          "output_token_count": 256,
+          "output_text": "We are given the expression:\n\nWe are to find all positive integers  such that this divisibility condition holds, and then compute the sum of all such .\n\nStep 1: Understand the divisibility condition\n\nWe are told that:\n\nThis means that  divides the product .\n\nLet’s denote:\n\nWe are to find all positive integers  such that , i.e., .\n\nStep 2: Use the property of divisibility\n\nWe can write:\n\nLet’s compute the remainder of the expression  when divided by .\n\nWe can use the Remainder Theorem. If we divide a polynomial  by , the remainder is .\n\nSo, define:\n\nThen:\n\nSo, the remainder when  is divided by  is 45.\n\nTherefore, for , we must have:\n\nThat is:\n\nStep 3: Find all positive integers  such that \n\nWe now find all positive integers  such that  is a positive divisor of 45.\n\nFirst, list all positive divisors of 45:\n\nNow, for each divisor , we solve:\n\nWe want positive , so \n\nSo, from the list of divisors of 45, we exclude 1:\n\nNow compute  for each:\n\n- - - - - So the valid values of  are:\n\nStep 4: Sum the values\n\n✅ Final Answer:",
+          "tokens_per_second": 755.2,
+          "output_token_count": 846,
           "acceptance_lengths": [
             4,
             7,
@@ -230,25 +976,1597 @@
             3,
             3,
             6,
-            13
-          ]
+            13,
+            14,
+            6,
+            2,
+            2,
+            4,
+            16,
+            7,
+            16,
+            16,
+            16,
+            15,
+            4,
+            14,
+            9,
+            10,
+            5,
+            14,
+            4,
+            7,
+            8,
+            6,
+            16,
+            4,
+            14,
+            7,
+            2,
+            12,
+            5,
+            1,
+            8,
+            6,
+            14,
+            16,
+            14,
+            6,
+            6,
+            16,
+            1,
+            3,
+            8,
+            14,
+            1,
+            2,
+            9,
+            1,
+            1,
+            2,
+            7,
+            11,
+            16,
+            15,
+            16,
+            16,
+            16,
+            16,
+            5,
+            16,
+            16,
+            1,
+            5,
+            16,
+            5,
+            16,
+            6
+          ],
+          "step_timestamps": [
+            {
+              "ms": 11.917,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 23.833,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 35.75,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 47.667,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 59.584,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 71.5,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 83.417,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 95.334,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 107.25,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 119.167,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 131.084,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 143.0,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 154.917,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 166.834,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 178.751,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 190.667,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 202.584,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 214.501,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 226.417,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 238.334,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 250.251,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 262.167,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 274.084,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 286.001,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 297.918,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 309.834,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 321.751,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 333.668,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 345.584,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 357.501,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 369.418,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 381.334,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 393.251,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 405.168,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 417.085,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 429.001,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 440.918,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 452.835,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 464.751,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 476.668,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 488.585,
+              "tokens_accepted": 15
+            },
+            {
+              "ms": 500.502,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 512.418,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 524.335,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 536.252,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 548.168,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 560.085,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 572.002,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 583.918,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 595.835,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 607.752,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 619.669,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 631.585,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 643.502,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 655.419,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 667.335,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 679.252,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 691.169,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 703.085,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 715.002,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 726.919,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 738.836,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 750.752,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 762.669,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 774.586,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 786.502,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 798.419,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 810.336,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 822.252,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 834.169,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 846.086,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 858.003,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 869.919,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 881.836,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 893.753,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 905.669,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 917.586,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 929.503,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 941.42,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 953.336,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 965.253,
+              "tokens_accepted": 15
+            },
+            {
+              "ms": 977.17,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 989.086,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1001.003,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1012.92,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1024.836,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1036.753,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1048.67,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1060.587,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1072.503,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1084.42,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1096.337,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1108.253,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1120.17,
+              "tokens_accepted": 6
+            }
+          ],
+          "total_time_ms": 1120.2
+        }
+      }
+    },
+    {
+      "dataset": "math500",
+      "prompt": "Rick is thinking of a positive factor of $14$ and Steve is thinking of a positive factor of $42$.  If Rick and Steve are thinking of the same number, how many possible numbers could they be thinking of?",
+      "methods": {
+        "baseline": {
+          "output_text": "We are given:\n\n- Rick is thinking of a positive factor of 14.\n- Steve is thinking of a positive factor of 42.\n- They are thinking of the same number.\n- We are to find how many possible numbers they could be thinking of.\n\nStep 1: Find all positive factors of 14\n\nWe start by factoring 14:\n\nSo the positive factors of 14 are:\n\nStep 2: Find all positive factors of 42\n\nWe factor 42:\n\nSo the positive factors of 42 are:\n\nStep 3: Find the common factors of 14 and 42\n\nWe now find the intersection of the two sets of factors:\n\n- Factors of 14: {1, 2, 7, 14}\n- Factors of 42: {1, 2, 3, 6, 7, 14, 21, 42}\n\nThe common factors are:\n\nStep 4: Count the number of common factors\n\nThere are 4 common factors: 1, 2, 7, and 14.\n\n✅ Final Answer:",
+          "tokens_per_second": 148.7,
+          "output_token_count": 379,
+          "total_time_ms": 2549.6
+        },
+        "dflash_tpu": {
+          "output_text": "We are given:\n\n- Rick is thinking of a positive factor of 14.\n- Steve is thinking of a positive factor of 42.\n- They are thinking of the same number.\n- We are to find how many possible numbers they could be thinking of.\n\nStep 1: Find all positive factors of 14\n\nWe start by factoring 14:\n\nSo the positive factors of 14 are:\n\nStep 2: Find all positive factors of 42\n\nWe factor 42:\n\nSo the positive factors of 42 are:\n\nStep 3: Find the common factors of 14 and 42\n\nWe now find the intersection of the two sets of factors:\n\n- Factors of 14: {1, 2, 7, 14}\n- Factors of 42: {1, 2, 3, 6, 7, 14, 21, 42}\n\nThe common factors are:\n\nStep 4: Count the number of common factors\n\nThere are 4 common factors: 1, 2, 7, and 14.\n\n✅ Final Answer:",
+          "tokens_per_second": 738.8,
+          "output_token_count": 379,
+          "acceptance_lengths": [
+            3,
+            2,
+            4,
+            16,
+            14,
+            4,
+            5,
+            6,
+            7,
+            14,
+            6,
+            3,
+            16,
+            7,
+            2,
+            16,
+            16,
+            6,
+            3,
+            16,
+            16,
+            12,
+            16,
+            11,
+            1,
+            4,
+            10,
+            3,
+            7,
+            4,
+            5,
+            16,
+            16,
+            16,
+            15,
+            16,
+            4,
+            1,
+            7,
+            1,
+            1,
+            10,
+            16,
+            6
+          ],
+          "step_timestamps": [
+            {
+              "ms": 11.659,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 23.317,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 34.976,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 46.634,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 58.293,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 69.952,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 81.61,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 93.269,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 104.927,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 116.586,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 128.245,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 139.903,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 151.562,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 163.22,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 174.879,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 186.538,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 198.196,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 209.855,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 221.513,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 233.172,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 244.831,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 256.489,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 268.148,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 279.806,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 291.465,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 303.124,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 314.782,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 326.441,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 338.099,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 349.758,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 361.417,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 373.075,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 384.734,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 396.392,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 408.051,
+              "tokens_accepted": 15
+            },
+            {
+              "ms": 419.71,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 431.368,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 443.027,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 454.686,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 466.344,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 478.003,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 489.661,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 501.32,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 512.979,
+              "tokens_accepted": 6
+            }
+          ],
+          "total_time_ms": 513.0
+        }
+      }
+    },
+    {
+      "dataset": "gsm8k",
+      "prompt": "Lorraine and Colleen are trading stickers for buttons. Each large sticker is worth a large button or three small buttons. A small sticker is worth one small button. A large button is worth three small stickers. Lorraine starts with 30 small stickers and 40 large stickers. She trades 90% of her small stickers for large buttons. She trades 50% of her large stickers for large buttons and trades the rest of them for small buttons. How many buttons does she have by the end?",
+      "methods": {
+        "baseline": {
+          "output_text": "We are given a trading system between stickers and buttons, and we need to calculate how many buttons Lorraine ends up with after a series of trades.\n\nStep 1: Understand the exchange rates\n\n- Large sticker = 1 large button or 3 small buttons\n- Small sticker = 1 small button\n- Large button = 3 small stickers\n\nSo, we can convert between stickers and buttons using these exchange rates.\n\nStep 2: Initial holdings\n\nLorraine starts with:\n\n- 30 small stickers\n- 40 large stickers\n\nStep 3: Trade 90% of her small stickers for large buttons\n\n- She has 30 small stickers.\n- 90% of 30 = 0.9 × 30 = 27 small stickers\n- Each small sticker = 1 small button\n- So, 27 small stickers = 27 small buttons\n- But she trades them for large buttons:\n  - 1 small sticker = 1 small button\n  - 1 large button = 3 small stickers\n  - So, 1 small sticker = 1/3 of a large button\n\nWait — this is a bit confusing. Let's clarify:\n\nWe are told:\n\n- A large sticker = 1 large button or 3 small buttons\n- A small sticker = 1 small button\n- A large button = 3 small stickers\n\nSo, to convert small stickers to large buttons, we need to use the fact that:\n\n- 1 large button = 3 small stickers\n- So, 1 small sticker = 1/3 of a large button\n\nSo, 27 small stickers = 27 × (1/3) = 9 large buttons\n\nSo, after this trade:\n\n- She gives away 27 small stickers\n- She gets 9 large buttons\n\nNow, her holdings:\n\n- Small stickers: 30 - 27 = 3 small stickers\n- Large stickers: 40\n- Large buttons: 9\n\nStep 4: Trade 50% of her large stickers for large buttons\n\nShe has 40 large stickers.\n\n- 50% of 40 = 20 large stickers\n- Each large sticker = 1 large button\n- So, 20 large stickers = 20 large buttons\n\nShe trades 20 large stickers for 20 large buttons.\n\nNow, her holdings:\n\n- Small stickers: 3\n- Large stickers: 40 - 20 = 20 large stickers\n- Large buttons: 9 + 20 = 29 large buttons\n\nStep 5: Trade the rest of her large stickers for small buttons\n\nShe has 20 large stickers left.\n\n- Each large sticker = 1 large button\n- But she wants to trade them for small buttons\n- 1 large button = 3 small stickers\n- So, 1 large sticker = 1 large button = 3 small stickers = 3 small buttons\n\nSo, 20 large stickers = 20 × 3 = 60 small buttons\n\nNow, her holdings:\n\n- Small stickers: 3\n- Large stickers: 0\n- Large buttons: 29\n- Small buttons: 60\n\nStep 6: Total number of buttons\n\nWe need to count all buttons she has:\n\n- Large buttons: 29\n- Small buttons: 60\n\nSo, total buttons = 29 + 60 = 89\n\n✅ Final Answer:",
+          "tokens_per_second": 148.5,
+          "output_token_count": 794,
+          "total_time_ms": 5348.5
+        },
+        "dflash_tpu": {
+          "output_text": "We are given a trading system between stickers and buttons, and we need to calculate how many buttons Lorraine ends up with after a series of trades.\n\nStep 1: Understand the exchange rates\n\n- Large sticker = 1 large button or 3 small buttons\n- Small sticker = 1 small button\n- Large button = 3 small stickers\n\nSo, we can convert between stickers and buttons using these exchange rates.\n\nStep 2: Initial holdings\n\nLorraine starts with:\n\n- 30 small stickers\n- 40 large stickers\n\nStep 3: Trade 90% of her small stickers for large buttons\n\n- She has 30 small stickers.\n- 90% of 30 = 0.9 × 30 = 27 small stickers\n- Each small sticker = 1 small button\n- So, 27 small stickers = 27 small buttons\n- But she trades them for large buttons:\n  - 1 small sticker = 1 small button\n  - 1 large button = 3 small stickers\n  - So, 1 small sticker = 1/3 of a large button\n\nWait — this is a bit confusing. Let's clarify:\n\nWe are told:\n\n- A large sticker = 1 large button or 3 small buttons\n- A small sticker = 1 small button\n- A large button = 3 small stickers\n\nSo, to trade small stickers for large buttons, we need to convert small stickers to small buttons, then convert small buttons to large buttons.\n\nBut the problem says:\n\n> She trades 90% of her small stickers for large buttons.\n\nSo, she is directly trading small stickers for large buttons.\n\nBut how?\n\nLet’s look at the exchange rates again:\n\n- 1 large button = 3 small stickers\n- So, 1 small sticker = 1/3 of a large button\n\nSo, 1 small sticker = 1/3 large button\n\nSo, 27 small stickers = 27 × (1/3) = 9 large buttons\n\nSo, she trades 27 small stickers for 9 large buttons\n\nNow, she has:\n\n- Small stickers left: 30 - 27 = 3 small stickers\n- Large stickers: 40\n- Large buttons: 9\n\nStep 4: Trade 50% of her large stickers for large buttons\n\nShe has 40 large stickers.\n\n50% of 40 = 20 large stickers\n\nEach large sticker = 1 large button\n\nSo, 20 large stickers = 20 large buttons\n\nShe trades 20 large stickers for 20 large buttons\n\nNow, she has:\n\n- Large stickers left: 40 - 20 = 20 large stickers\n- Large buttons: 9 (from before) + 20 = 29 large buttons\n- Small stickers: 3\n\nStep 5: Trade the rest of her large stickers for small buttons\n\nShe has 20 large stickers left.\n\nEach large sticker = 3 small stickers\n\nSo, 20 large stickers = 20 × 3 = 60 small stickers\n\nNow, she has:\n\n- Large buttons: 29\n- Small stickers: 3 + 60 = 63 small stickers\n- Small buttons: 0 (she hasn't traded any small stickers for small buttons yet)\n\nStep 6: Convert all stickers to buttons\n\nWe need to convert all stickers to buttons.\n\n- Large buttons: 29 (already in button form)\n- Small stickers: 63\n  - Each small sticker = 1 small button\n  - So, 63 small stickers = 63 small buttons\n\nSo, total buttons = large buttons + small buttons\n\n= 29 + 63 = 92 buttons\n\n✅ Final Answer:",
+          "tokens_per_second": 318.5,
+          "output_token_count": 867,
+          "acceptance_lengths": [
+            4,
+            2,
+            2,
+            5,
+            6,
+            4,
+            4,
+            2,
+            1,
+            1,
+            7,
+            8,
+            4,
+            2,
+            4,
+            12,
+            16,
+            5,
+            3,
+            3,
+            1,
+            3,
+            9,
+            1,
+            6,
+            16,
+            12,
+            8,
+            1,
+            1,
+            12,
+            5,
+            10,
+            2,
+            3,
+            1,
+            4,
+            10,
+            8,
+            4,
+            2,
+            5,
+            4,
+            2,
+            4,
+            5,
+            7,
+            8,
+            2,
+            4,
+            2,
+            5,
+            2,
+            4,
+            6,
+            3,
+            2,
+            5,
+            5,
+            16,
+            16,
+            1,
+            3,
+            10,
+            1,
+            3,
+            2,
+            3,
+            6,
+            2,
+            4,
+            2,
+            15,
+            1,
+            2,
+            1,
+            1,
+            2,
+            2,
+            4,
+            4,
+            5,
+            5,
+            1,
+            5,
+            3,
+            5,
+            4,
+            9,
+            2,
+            7,
+            7,
+            8,
+            6,
+            8,
+            2,
+            10,
+            1,
+            2,
+            4,
+            2,
+            11,
+            2,
+            4,
+            2,
+            10,
+            16,
+            5,
+            6,
+            2,
+            9,
+            3,
+            2,
+            2,
+            5,
+            4,
+            10,
+            2,
+            2,
+            6,
+            8,
+            16,
+            10,
+            2,
+            2,
+            6,
+            9,
+            12,
+            9,
+            9,
+            3,
+            6,
+            11,
+            12,
+            6,
+            1,
+            5,
+            7,
+            9,
+            8,
+            2,
+            1,
+            3,
+            2,
+            2,
+            10,
+            2,
+            2,
+            5,
+            1,
+            1,
+            2,
+            4,
+            1,
+            1,
+            1,
+            3,
+            2,
+            1,
+            11,
+            5,
+            12,
+            5,
+            7,
+            2,
+            2,
+            1,
+            4,
+            1,
+            10,
+            2,
+            16,
+            4
+          ],
+          "step_timestamps": [
+            {
+              "ms": 15.734,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 31.467,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 47.201,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 62.935,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 78.668,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 94.402,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 110.136,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 125.869,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 141.603,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 157.337,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 173.071,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 188.804,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 204.538,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 220.272,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 236.005,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 251.739,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 267.473,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 283.206,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 298.94,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 314.674,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 330.407,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 346.141,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 361.875,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 377.608,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 393.342,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 409.076,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 424.81,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 440.543,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 456.277,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 472.011,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 487.744,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 503.478,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 519.212,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 534.945,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 550.679,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 566.413,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 582.146,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 597.88,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 613.614,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 629.347,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 645.081,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 660.815,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 676.548,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 692.282,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 708.016,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 723.75,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 739.483,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 755.217,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 770.951,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 786.684,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 802.418,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 818.152,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 833.885,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 849.619,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 865.353,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 881.086,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 896.82,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 912.554,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 928.287,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 944.021,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 959.755,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 975.489,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 991.222,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1006.956,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 1022.69,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1038.423,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1054.157,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1069.891,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1085.624,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 1101.358,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1117.092,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1132.825,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1148.559,
+              "tokens_accepted": 15
+            },
+            {
+              "ms": 1164.293,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1180.026,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1195.76,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1211.494,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1227.227,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1242.961,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1258.695,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1274.429,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1290.162,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1305.896,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1321.63,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1337.363,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1353.097,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1368.831,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1384.564,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1400.298,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 1416.032,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1431.765,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 1447.499,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 1463.233,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 1478.966,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 1494.7,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 1510.434,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1526.168,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 1541.901,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1557.635,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1573.369,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1589.102,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1604.836,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 1620.57,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1636.303,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1652.037,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1667.771,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 1683.504,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1699.238,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1714.972,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 1730.705,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1746.439,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 1762.173,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1777.907,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1793.64,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1809.374,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1825.108,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1840.841,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 1856.575,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1872.309,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1888.042,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 1903.776,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 1919.51,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1935.243,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 1950.977,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1966.711,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1982.444,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 1998.178,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 2013.912,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 2029.645,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 2045.379,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 2061.113,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 2076.847,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 2092.58,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 2108.314,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 2124.048,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 2139.781,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2155.515,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 2171.249,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 2186.982,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 2202.716,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 2218.45,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2234.183,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2249.917,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 2265.651,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2281.384,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2297.118,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 2312.852,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2328.586,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2344.319,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 2360.053,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2375.787,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2391.52,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2407.254,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 2422.988,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2438.721,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2454.455,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2470.189,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 2485.922,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2501.656,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2517.39,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 2533.123,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 2548.857,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 2564.591,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 2580.324,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 2596.058,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2611.792,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2627.526,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2643.259,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 2658.993,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 2674.727,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 2690.46,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 2706.194,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 2721.928,
+              "tokens_accepted": 4
+            }
+          ],
+          "total_time_ms": 2721.9
         }
       }
     },
     {
       "dataset": "humaneval",
-      "sample_idx": 1,
-      "prompt": "[humaneval sample 1]",
+      "prompt": "Write a solution to the following problem and make sure that it passes the tests:\n```python\n\ndef check_if_last_char_is_a_letter(txt):\n    '''\n    Create a function that returns True if the last character\n    of a given string is an alphabetical character and is not\n    a part of a word, and False otherwise.\n    Note: \"word\" is a group of characters separated by space.\n\n    Examples:\n    check_if_last_char_is_a_letter(\"apple pie\") ➞ False\n    check_if_last_char_is_a_letter(\"apple pi e\") ➞ True\n    check_if_last_char_is_a_letter(\"apple pi e \") ➞ False\n    check_if_last_char_is_a_letter(\"\") ➞ False \n    '''\n\n```\nassistant\n<think>\n\n</think>",
       "methods": {
         "baseline": {
-          "output_text": "[Baseline output - 256 tokens]",
-          "tokens_per_second": 157.8,
-          "output_token_count": 256
+          "output_text": "Here's a solution to the problem that meets the requirements:\n\n`python\ndef check_if_last_char_is_a_letter(txt):\n    '''\n    Returns True if the last character of a given string is an alphabetical character\n    and is not part of a word (i.e., it is a standalone character at the end of the string),\n    and False otherwise.\n    '''\n    if not txt:\n        return False\n\n    Check if the last character is a letter\n    last_char = txt[-1]\n    if not last_char.isalpha():\n        return False\n\n    Check if the last character is not part of a word\n    That is, it should be a standalone character at the end of the string\n    So, the character before the last (if it exists) should be a space\n    if len(txt) > 1 and txt[-2] != ' ':\n        return False\n\n    return True\n`\n\nExplanation:\n\n- if not txt: If the string is empty, return False.\n- last_char = txt[-1]: Get the last character.\n- last_char.isalpha(): Check if it's an alphabetical character.\n- txt[-2] != ' ': Ensure that the character before the last is a space, meaning the last character is standalone.\n- Return True if all conditions are met, otherwise False.\n\nTest Cases:\n\n`python\nprint(check_if_last_char_is_a_letter(\"apple pie\"))      False\nprint(check_if_last_char_is_a_letter(\"apple pi e\"))     True\nprint(check_if_last_char_is_a_letter(\"apple pi e \"))    False\nprint(check_if_last_char_is_a_letter(\"\"))               False\n`\n\nThis solution should pass all the test cases.",
+          "tokens_per_second": 148.6,
+          "output_token_count": 373,
+          "total_time_ms": 2509.4
         },
         "dflash_tpu": {
-          "output_text": "[DFlash TPU output - 256 tokens]",
-          "tokens_per_second": 408.2,
-          "output_token_count": 256,
+          "output_text": "Here's a solution to the problem that meets the requirements:\n\n`python\ndef check_if_last_char_is_a_letter(txt):\n    '''\n    Returns True if the last character of a given string is an alphabetical character\n    and is not part of a word (i.e., it is a standalone character at the end of the string),\n    and False otherwise.\n    '''\n    if not txt:\n        return False\n\n    Check if the last character is a letter\n    last_char = txt[-1]\n    if not last_char.isalpha():\n        return False\n\n    Check if the last character is not part of a word\n    That is, it should be a standalone character at the end of the string\n    So, the character before the last (if it exists) should be a space\n    if len(txt) > 1 and txt[-2] != ' ':\n        return False\n\n    return True\n`\n\nExplanation:\n\n- if not txt: If the string is empty, return False.\n- last_char.isalpha(): Checks if the last character is a letter.\n- txt[-2] != ' ': Ensures that the character before the last is a space, meaning the last character is standalone and not part of a word.\n\nTest Cases:\n\n`python\nprint(check_if_last_char_is_a_letter(\"apple pie\"))      False\nprint(check_if_last_char_is_a_letter(\"apple pi e\"))     True\nprint(check_if_last_char_is_a_letter(\"apple pi e \"))    False\nprint(check_if_last_char_is_a_letter(\"\"))               False\n`\n\nThis solution should pass all the test cases.",
+          "tokens_per_second": 472.7,
+          "output_token_count": 349,
           "acceptance_lengths": [
             3,
             5,
@@ -299,24 +2617,272 @@
             5,
             2,
             1,
-            6
-          ]
+            6,
+            8,
+            16,
+            2,
+            16,
+            16,
+            2,
+            13,
+            9,
+            8
+          ],
+          "step_timestamps": [
+            {
+              "ms": 12.513,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 25.026,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 37.539,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 50.052,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 62.565,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 75.078,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 87.591,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 100.104,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 112.617,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 125.13,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 137.642,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 150.155,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 162.668,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 175.181,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 187.694,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 200.207,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 212.72,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 225.233,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 237.746,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 250.259,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 262.772,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 275.285,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 287.798,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 300.311,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 312.824,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 325.337,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 337.85,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 350.363,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 362.876,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 375.389,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 387.902,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 400.415,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 412.927,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 425.44,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 437.953,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 450.466,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 462.979,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 475.492,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 488.005,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 500.518,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 513.031,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 525.544,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 538.057,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 550.57,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 563.083,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 575.596,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 588.109,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 600.622,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 613.135,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 625.648,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 638.161,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 650.674,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 663.187,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 675.7,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 688.212,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 700.725,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 713.238,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 725.751,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 738.264,
+              "tokens_accepted": 8
+            }
+          ],
+          "total_time_ms": 738.3
         }
       }
     },
     {
       "dataset": "mbpp",
-      "sample_idx": 1,
-      "prompt": "[mbpp sample 1]",
+      "prompt": "Write a python function to find whether a number is divisible by 11.\nassistant\n<think>\n\n</think>",
       "methods": {
         "baseline": {
-          "output_text": "[Baseline output - 213 tokens]",
-          "tokens_per_second": 155.2,
-          "output_token_count": 213
+          "output_text": "Sure! Here's a Python function to check whether a number is divisible by 11:\n\n`python\ndef is_divisible_by_11(n):\n    \"\"\"\n    Check if a number is divisible by 11.\n\n    Parameters:\n    n (int): The number to check.\n\n    Returns:\n    bool: True if the number is divisible by 11, False otherwise.\n    \"\"\"\n    return n % 11 == 0\n`\n\nHow it works:\nThe function uses the modulus operator % to check if the remainder when dividing n by 11 is zero. If it is, then n is divisible by 11.\n\nExample usage:\n`python\nprint(is_divisible_by_11(22))  Output: True\nprint(is_divisible_by_11(12))  Output: False\n`\n\nLet me know if you'd like a version that works with strings (like checking divisibility by 11 using the alternating sum method).",
+          "tokens_per_second": 147.2,
+          "output_token_count": 213,
+          "total_time_ms": 1446.6
         },
         "dflash_tpu": {
-          "output_text": "[DFlash TPU output - 209 tokens]",
-          "tokens_per_second": 408.3,
+          "output_text": "Sure! Here's a Python function to check whether a number is divisible by 11:\n\n`python\ndef is_divisible_by_11(n):\n    \"\"\"\n    Check if a number is divisible by 11.\n\n    Parameters:\n    n (int): The number to check.\n\n    Returns:\n    bool: True if the number is divisible by 11, False otherwise.\n    \"\"\"\n    return n % 11 == 0\n`\n\nHow it works:\nThe function uses the modulus operator % to check if the remainder when dividing by 11 is zero. If it is, the number is divisible by 11.\n\nExample usage:\n`python\nprint(is_divisible_by_11(22))  Output: True\nprint(is_divisible_by_11(123)) Output: False\n`\n\nLet me know if you'd like a version that works with strings (e.g., for checking divisibility of a number represented as a string).",
+          "tokens_per_second": 396.5,
           "output_token_count": 209,
           "acceptance_lengths": [
             5,
@@ -352,46 +2918,196 @@
             1,
             3,
             3
-          ]
+          ],
+          "step_timestamps": [
+            {
+              "ms": 15.972,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 31.943,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 47.915,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 63.886,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 79.858,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 95.829,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 111.801,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 127.772,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 143.744,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 159.715,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 175.687,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 191.659,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 207.63,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 223.602,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 239.573,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 255.545,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 271.516,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 287.488,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 303.459,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 319.431,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 335.402,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 351.374,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 367.345,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 383.317,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 399.289,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 415.26,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 431.232,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 447.203,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 463.175,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 479.146,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 495.118,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 511.089,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 527.061,
+              "tokens_accepted": 3
+            }
+          ],
+          "total_time_ms": 527.1
         }
       }
     },
     {
       "dataset": "mt-bench",
-      "sample_idx": 1,
-      "prompt": "[mt-bench sample 1]",
+      "prompt": "Given these categories - Literature, History, Science, and Art. Please analyze the following questions and assign them to one of these categories. In your response, refrain from uttering any extraneous words. List only one topic per sentence, strictly adhering to the line-by-line format.\n1. Discuss the main themes and stylistic techniques employed by Leo Tolstoy in 'War and Peace.' How do they align with the wider social context of 19th-century Russia?\n2. Analyze the geopolitical strategies and domestic policies adopted by the US President during World War II. How did these actions shape the post-war international order?\n3. Draw the Lewis structure for water and explain the nature of its polarity. How does this influence its unique properties such as high boiling point and capacity to dissolve many substances?\n4. Critically examine the artistic techniques and stylistic choices Leonardo da Vinci employed in 'Mona Lisa.' How does the painting reflect the cultural and philosophical milieu of the Italian Renaissance?\nassistant\n<think>\n\n</think>",
       "methods": {
         "baseline": {
-          "output_text": "[Baseline output - 16 tokens]",
-          "tokens_per_second": 163.3,
-          "output_token_count": 16
+          "output_text": "1. Literature  \n2. History  \n3. Science  \n4. Art",
+          "tokens_per_second": 152.8,
+          "output_token_count": 16,
+          "total_time_ms": 104.7
         },
         "dflash_tpu": {
-          "output_text": "[DFlash TPU output - 16 tokens]",
-          "tokens_per_second": 505.7,
+          "output_text": "1. Literature  \n2. History  \n3. Science  \n4. Art",
+          "tokens_per_second": 477.0,
           "output_token_count": 16,
           "acceptance_lengths": [
             4,
             6,
             7
-          ]
+          ],
+          "step_timestamps": [
+            {
+              "ms": 11.181,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 22.363,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 33.544,
+              "tokens_accepted": 7
+            }
+          ],
+          "total_time_ms": 33.5
         }
       }
     },
     {
       "dataset": "alpaca",
-      "sample_idx": 1,
-      "prompt": "[alpaca sample 1]",
+      "prompt": "Calculate the atomic mass for lithium.\nassistant\n<think>\n\n</think>",
       "methods": {
         "baseline": {
-          "output_text": "[Baseline output - 256 tokens]",
-          "tokens_per_second": 157.3,
-          "output_token_count": 256
+          "output_text": "To calculate the atomic mass of lithium (Li), we need to consider the isotopes of lithium and their abundances.\n\nStep 1: Identify the isotopes of lithium\n\nLithium has two stable isotopes:\n\n- Lithium-6 (⁶Li): atomic mass ≈ 6.015122 u  \n- Lithium-7 (⁷Li): atomic mass ≈ 7.016003 u\n\nStep 2: Find the natural abundance of each isotope\n\nFrom the periodic table or standard data:\n\n- ⁶Li: abundance ≈ 7.5% (0.075)  \n- ⁷Li: abundance ≈ 92.5% (0.925)\n\nStep 3: Calculate the weighted average atomic mass\n\nFinal Answer:\n\nThe atomic mass of lithium is approximately:\n\nThis value is consistent with the standard atomic weight of lithium listed on the periodic table.",
+          "tokens_per_second": 117.4,
+          "output_token_count": 349,
+          "total_time_ms": 2973.4
         },
         "dflash_tpu": {
-          "output_text": "[DFlash TPU output - 256 tokens]",
-          "tokens_per_second": 266.1,
-          "output_token_count": 256,
+          "output_text": "To calculate the atomic mass of lithium (Li), we need to consider the isotopes of lithium and their abundances.\n\nStep 1: Identify the isotopes of lithium\n\nLithium has two stable isotopes:\n\n- Lithium-6 (⁶Li): atomic mass ≈ 6.015122 u  \n- Lithium-7 (⁷Li): atomic mass ≈ 7.016003 u\n\nStep 2: Find the natural abundance of each isotope\n\nFrom the periodic table or standard data:\n\n- ⁶Li: abundance ≈ 7.5% (0.075)  \n- ⁷Li: abundance ≈ 92.5% (0.925)\n\nStep 3: Calculate the weighted average atomic mass\n\nFinal Answer:\n\nThe atomic mass of lithium is approximately:\n\nThis value is consistent with the standard atomic weight of lithium listed on the periodic table.",
+          "tokens_per_second": 262.5,
+          "output_token_count": 349,
           "acceptance_lengths": [
             7,
             4,
@@ -465,25 +3181,440 @@
             4,
             2,
             1,
-            2
-          ]
+            2,
+            1,
+            5,
+            2,
+            1,
+            1,
+            1,
+            2,
+            1,
+            11,
+            4,
+            2,
+            7,
+            5,
+            3,
+            9,
+            16,
+            2,
+            2,
+            2,
+            3,
+            1,
+            1,
+            3,
+            8
+          ],
+          "step_timestamps": [
+            {
+              "ms": 13.709,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 27.418,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 41.127,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 54.836,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 68.545,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 82.254,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 95.963,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 109.672,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 123.381,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 137.09,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 150.799,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 164.508,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 178.217,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 191.926,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 205.635,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 219.344,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 233.053,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 246.762,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 260.472,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 274.181,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 287.89,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 301.599,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 315.308,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 329.017,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 342.726,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 356.435,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 370.144,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 383.853,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 397.562,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 411.271,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 424.98,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 438.689,
+              "tokens_accepted": 10
+            },
+            {
+              "ms": 452.398,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 466.107,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 479.816,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 493.525,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 507.234,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 520.943,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 534.652,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 548.361,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 562.07,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 575.779,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 589.488,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 603.197,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 616.906,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 630.615,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 644.324,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 658.033,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 671.742,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 685.451,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 699.16,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 712.869,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 726.578,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 740.287,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 753.996,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 767.705,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 781.415,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 795.124,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 808.833,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 822.542,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 836.251,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 849.96,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 863.669,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 877.378,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 891.087,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 904.796,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 918.505,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 932.214,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 945.923,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 959.632,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 973.341,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 987.05,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1000.759,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1014.468,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1028.177,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1041.886,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1055.595,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1069.304,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1083.013,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1096.722,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1110.431,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1124.14,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 1137.849,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1151.558,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1165.267,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 1178.976,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1192.685,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1206.394,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 1220.103,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 1233.812,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1247.521,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1261.23,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1274.939,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1288.648,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1302.358,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1316.067,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1329.776,
+              "tokens_accepted": 8
+            }
+          ],
+          "total_time_ms": 1329.8
         }
       }
     },
     {
       "dataset": "swe-bench",
-      "sample_idx": 1,
-      "prompt": "[swe-bench sample 1]",
+      "prompt": "Problem Statement:\ndisplay bug while using pretty_print with sympy.vector object in the terminal\nThe following code jumbles some of the outputs in the terminal, essentially by inserting the unit vector in the middle -\r\n```python\r\nfrom sympy import *\r\nfrom sympy.vector import CoordSys3D, Del\r\n\r\ninit_printing()\r\n\r\ndelop = Del()\r\nCC_ = CoordSys3D(\"C\")\r\nx,    y,    z    = CC_.x, CC_.y, CC_.z\r\nxhat, yhat, zhat = CC_.i, CC_.j, CC_.k\r\n\r\nt = symbols(\"t\")\r\nten = symbols(\"10\", positive=True)\r\neps, mu = 4*pi*ten**(-11), ten**(-5)\r\n\r\nBx = 2 * ten**(-4) * cos(ten**5 * t) * sin(ten**(-3) * y)\r\nvecB = Bx * xhat\r\nvecE = (1/eps) * Integral(delop.cross(vecB/mu).doit(), t)\r\n\r\npprint(vecB)\r\nprint()\r\npprint(vecE)\r\nprint()\r\npprint(vecE.doit())\r\n```\r\n\r\nOutput:\r\n```python\r\n⎛     ⎛y_C⎞    ⎛  5  ⎞⎞    \r\n⎜2⋅sin⎜───⎟ i_C⋅cos⎝10 ⋅t⎠⎟\r\n⎜     ⎜  3⎟           ⎟    \r\n⎜     ⎝10 ⎠           ⎟    \r\n⎜─────────────────────⎟    \r\n⎜           4         ⎟    \r\n⎝         10          ⎠    \r\n\r\n⎛     ⌠                           ⎞    \r\n⎜     ⎮       ⎛y_C⎞    ⎛  5  ⎞    ⎟ k_C\r\n⎜     ⎮ -2⋅cos⎜───⎟⋅cos⎝10 ⋅t⎠    ⎟    \r\n⎜     ⎮       ⎜  3⎟               ⎟    \r\n⎜  11 ⎮       ⎝10 ⎠               ⎟    \r\n⎜10  ⋅⎮ ─────────────────────── dt⎟    \r\n⎜     ⎮             2             ⎟    \r\n⎜     ⎮           10              ⎟    \r\n⎜     ⌡                           ⎟    \r\n⎜─────────────────────────────────⎟    \r\n⎝               4⋅π               ⎠    \r\n\r\n⎛   4    ⎛  5  ⎞    ⎛y_C⎞ ⎞    \r\n⎜-10 ⋅sin⎝10 ⋅t⎠⋅cos⎜───⎟ k_C ⎟\r\n⎜                   ⎜  3⎟ ⎟    \r\n⎜                   ⎝10 ⎠ ⎟    \r\n⎜─────────────────────────⎟    \r\n⎝           2⋅π           ⎠    ```\n\nPlease fix the issue described above.\nassistant\n<think>\n\n</think>",
       "methods": {
         "baseline": {
-          "output_text": "[Baseline output - 256 tokens]",
-          "tokens_per_second": 154.8,
-          "output_token_count": 256
+          "output_text": "The issue you're encountering is due to how sympy.vector and sympy.pprint interact, especially when printing expressions that involve unit vectors (like xhat, yhat, zhat) in the context of sympy.vector objects.\n\nProblem Summary:\nWhen you use pprint on a sympy.vector expression, it sometimes places the unit vector in the middle of the expression, which is not the intended behavior. This is a known issue with the sympy.pprint module when handling sympy.vector objects.\n\nSolution:\nTo fix this, you can disable pretty printing for sympy.vector expressions and instead use the standard print function or sympy.pprint with a custom formatting function.\n\nHowever, a more effective and clean solution is to use sympy.pprint with a custom print_func that ensures the unit vectors are printed correctly.\n\nHere's how you can fix the issue:\n\n✅ Fixed Code:\n\n`python\nfrom sympy import *\nfrom sympy.vector import CoordSys3D, Del\n\ninit_printing()\n\ndelop = Del()\nCC_ = CoordSys3D(\"C\")\nx, y, z = CC_.x, CC_.y, CC_.z\nxhat, yhat, zhat = CC_.i, CC_.j, CC_.k\n\nt = symbols(\"t\")\nten = symbols(\"10\", positive=True)\neps, mu = 4piten(-11), ten(-5)\n\nBx = 2  ten(-4)  cos(ten5  t)  sin(ten*(-3)  y)\nvecB = Bx * xhat\nvecE = (1/eps) * Integral(delop.cross(vecB/mu).doit(), t)\n\nDefine a custom print function to avoid jumbling\ndef custom_print(expr):\n    from sympy.pprint import pformat\n    print(pformat(expr))\n\ncustom_print(vecB)\nprint()\ncustom_print(vecE)\nprint()\ncustom_print(vecE.doit())\n`\n\n🧠 Explanation:\n\n- The custom_print function uses pformat instead of pprint, which avoids the issue with sympy.vector unit vectors being placed in the middle.\n- This ensures that the expressions are printed in a more readable and consistent format.\n\n🧪 Output (Expected):\n\n`\n210(-4)cos(105t)sin(10*(-3)y)*x_C\n\n1011Integral(-2cos(105t)sin(10(-3)y)/102, t)k_C\n\n-104sin(105t)cos(10(-3)y)*k_C\n`\n\n✅ Alternative (if you still want to use pprint):\n\nYou can also try using sympy.pprint with a print_func that explicitly handles sympy.vector objects:\n\n`python\nfrom sympy.pprint import pprint, pformat\nfrom sympy.vector import CoordSys3D\n\ndef vector_print(expr):\n    if isinstance(expr, CoordSys3D):\n        return pformat(expr)\n    return pformat(expr)\n\npprint(vecB, print_func=vector_print)\nprint()\npprint(vecE, print_func=vector_print)\nprint()\npprint(vecE.doit(), print_func=vector_print)\n`\n\nThis approach ensures that sympy.vector objects are printed in a consistent way.\n\n✅ Conclusion:\n\nThe issue is due to how sympy.pprint handles sympy.vector expressions. Using pformat or a custom print_func that handles sympy.vector objects cleanly resolves the problem.",
+          "tokens_per_second": 132.5,
+          "output_token_count": 829,
+          "total_time_ms": 6255.8
         },
         "dflash_tpu": {
-          "output_text": "[DFlash TPU output - 256 tokens]",
-          "tokens_per_second": 273.5,
-          "output_token_count": 256,
+          "output_text": "The issue you're encountering is due to how sympy.vector and sympy.pprint interact, especially when printing expressions that involve vector components and units. The pprint function in sympy is not always able to handle the internal structure of sympy.vector objects correctly, especially when they are embedded within more complex expressions like integrals or derivatives.\n\n✅ Solution\n\nTo fix the issue, you can disable init_printing() and instead use sympy.pprint() directly on the expressions. This gives you more control over the formatting and avoids the internal vector formatting issues.\n\nHere's the corrected version of your code:\n\n`python\nfrom sympy import *\nfrom sympy.vector import CoordSys3D, Del\n\nDisable init_printing to avoid conflicts with vector printing\ninit_printing()  Commented out to avoid the issue\n\ndelop = Del()\nCC_ = CoordSys3D(\"C\")\nx, y, z = CC_.x, CC_.y, CC_.z\nxhat, yhat, zhat = CC_.i, CC_.j, CC_.k\n\nt = symbols(\"t\")\nten = symbols(\"10\", positive=True)\neps, mu = 4piten(-11), ten(-5)\n\nBx = 2  ten(-4)  cos(ten5  t)  sin(ten*(-3)  y)\nvecB = Bx * xhat\nvecE = (1/eps) * Integral(delop.cross(vecB/mu).doit(), t)\n\nUse sympy.pprint directly\npprint(vecB)\nprint()\npprint(vecE)\nprint()\npprint(vecE.doit())\n`\n\n📝 Explanation\n\n- init_printing() is not used, which avoids the internal vector formatting that causes the jumbled output.\n- pprint() is used directly on the expressions, which gives more consistent and readable output.\n- The vecE expression is printed as an integral, and vecE.doit() evaluates the integral, which is then printed cleanly.\n\n✅ Result\n\nThis should now print the expressions in a more readable and consistent format, without the unit vector being inserted in the middle of the expression.\n\nLet me know if you'd like to further customize the output or use a different printing method.",
+          "tokens_per_second": 305.3,
+          "output_token_count": 505,
           "acceptance_lengths": [
             8,
             3,
@@ -557,8 +3688,608 @@
             16,
             16,
             12,
-            11
-          ]
+            11,
+            2,
+            6,
+            13,
+            5,
+            14,
+            16,
+            13,
+            9,
+            1,
+            2,
+            4,
+            1,
+            1,
+            4,
+            8,
+            12,
+            5,
+            4,
+            4,
+            2,
+            2,
+            3,
+            3,
+            3,
+            4,
+            3,
+            3,
+            1,
+            5,
+            2,
+            2,
+            4,
+            2,
+            1,
+            2,
+            2,
+            1,
+            1,
+            4,
+            6,
+            1,
+            5,
+            2,
+            5,
+            2,
+            1,
+            2,
+            2,
+            1,
+            2,
+            3,
+            3,
+            2,
+            2,
+            7,
+            7,
+            3,
+            5,
+            1,
+            2,
+            5
+          ],
+          "step_timestamps": [
+            {
+              "ms": 12.344,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 24.687,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 37.031,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 49.375,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 61.719,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 74.062,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 86.406,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 98.75,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 111.094,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 123.437,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 135.781,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 148.125,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 160.469,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 172.812,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 185.156,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 197.5,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 209.844,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 222.187,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 234.531,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 246.875,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 259.219,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 271.562,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 283.906,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 296.25,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 308.594,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 320.937,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 333.281,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 345.625,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 357.969,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 370.312,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 382.656,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 395.0,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 407.344,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 419.687,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 432.031,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 444.375,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 456.719,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 469.062,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 481.406,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 493.75,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 506.094,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 518.437,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 530.781,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 543.125,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 555.469,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 567.812,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 580.156,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 592.5,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 604.844,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 617.187,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 629.531,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 641.875,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 654.219,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 666.562,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 678.906,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 691.25,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 703.594,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 715.937,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 728.281,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 740.625,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 752.969,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 765.312,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 777.656,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 790.0,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 802.344,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 814.687,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 827.031,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 839.375,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 851.719,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 864.062,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 876.406,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 888.75,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 901.094,
+              "tokens_accepted": 11
+            },
+            {
+              "ms": 913.437,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 925.781,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 938.125,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 950.469,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 962.812,
+              "tokens_accepted": 14
+            },
+            {
+              "ms": 975.156,
+              "tokens_accepted": 16
+            },
+            {
+              "ms": 987.5,
+              "tokens_accepted": 13
+            },
+            {
+              "ms": 999.844,
+              "tokens_accepted": 9
+            },
+            {
+              "ms": 1012.187,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1024.531,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1036.875,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1049.219,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1061.562,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1073.906,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1086.25,
+              "tokens_accepted": 8
+            },
+            {
+              "ms": 1098.594,
+              "tokens_accepted": 12
+            },
+            {
+              "ms": 1110.937,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1123.281,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1135.625,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1147.969,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1160.312,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1172.656,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1185.0,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1197.344,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1209.687,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1222.031,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1234.375,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1246.719,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1259.062,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1271.406,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1283.75,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1296.094,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1308.437,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1320.781,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1333.125,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1345.469,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1357.812,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1370.156,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1382.5,
+              "tokens_accepted": 4
+            },
+            {
+              "ms": 1394.844,
+              "tokens_accepted": 6
+            },
+            {
+              "ms": 1407.187,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1419.531,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1431.875,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1444.219,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1456.562,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1468.906,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1481.25,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1493.594,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1505.937,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1518.281,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1530.625,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1542.969,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1555.312,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1567.656,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1580.0,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 1592.344,
+              "tokens_accepted": 7
+            },
+            {
+              "ms": 1604.687,
+              "tokens_accepted": 3
+            },
+            {
+              "ms": 1617.031,
+              "tokens_accepted": 5
+            },
+            {
+              "ms": 1629.375,
+              "tokens_accepted": 1
+            },
+            {
+              "ms": 1641.719,
+              "tokens_accepted": 2
+            },
+            {
+              "ms": 1654.062,
+              "tokens_accepted": 5
+            }
+          ],
+          "total_time_ms": 1654.1
         }
       }
     }

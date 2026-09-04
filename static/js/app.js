@@ -9,12 +9,12 @@ var CHART_RENDERERS = [
   { id: "v5p-category-chart",         render: function (el, d) { window.charts.renderCategorySummary(el, d.v5pStandaloneAll); },           need: function (d) { return d.v5pStandaloneAll && d.v5pStandaloneAll.length > 0; } },
   { id: "v5p-gpu-parity-chart",       render: function (el, d) { window.charts.renderGpuParity(el, d.v5pVsGpuPaper); },                   need: function (d) { return d.v5pVsGpuPaper && d.v5pVsGpuPaper.length > 0; } },
   { id: "v5p-output-quality-chart",   render: function (el, d) { window.charts.renderOutputQuality(el, d.v5pStandaloneAll); },             need: function (d) { return d.v5pStandaloneAll && d.v5pStandaloneAll.length > 0; } },
+  { id: "profiling-chart",            render: function (el, d) { if (d.profilingGsm8k) window.charts.renderProfiling(el, d.profilingGsm8k); }, need: function (d) { return !!d.profilingGsm8k; } },
+  { id: "method-comparison-chart",    render: function (el, d) { window.charts.renderMethodComparison(el, d.vllmPipelineTps, d.v4StandaloneAll); }, need: function (d) { return d.vllmPipelineTps && d.vllmPipelineTps.length > 0; } },
 ];
 
 var STANDALONE_CHARTS = {
   "summary-dashboard-chart": function (el, d) { window.charts.renderSummaryDashboard(el, d.v5pStandaloneAll, d.v5pVsGpuPaper); },
-  "profiling-chart": function (el, d) { if (d.profilingGsm8k) window.charts.renderProfiling(el, d.profilingGsm8k); },
-  "method-comparison-chart": function (el, d) { window.charts.renderMethodComparison(el, d.vllmPipelineTps, d.v4StandaloneAll); },
   "v5p-vs-v4-chart": function (el, d) { window.charts.renderV5pVsV4(el, d.v5pStandaloneAll, d.v4StandaloneAll); },
   "cost-efficiency-chart": function (el, d) { window.charts.renderCostEfficiency(el, d.v5pStandaloneAll, d.v4StandaloneAll, d.v5pVsGpuPaper); }
 };
@@ -55,7 +55,7 @@ function initCarousel(data) {
     indicator.textContent = (current + 1) + " / " + total;
     renderChart(current, data);
     if (scroll && carouselEl) {
-      var header = document.querySelector(".site-header");
+      var header = document.querySelector(".navbar");
       var offset = header ? header.offsetHeight + 16 : 16;
       var top = carouselEl.getBoundingClientRect().top + window.pageYOffset - offset;
       window.scrollTo({ top: top, behavior: "smooth" });
@@ -123,21 +123,13 @@ function setupChartReplay(data) {
 }
 
 async function init() {
-  // Scroll fade-in/fade-out — runs before data load so page is never blank
-  if (window.scrollTrigger && window.scrollTrigger.initFadeOnScroll) {
-    window.scrollTrigger.initFadeOnScroll();
-  }
-
   const data = await window.dataLoader.loadData();
 
   renderDashboard(data);
   initCarousel(data);
   renderConclusionCharts(data);
 
-  // Re-render charts with animation every time they scroll into view
-  if (window.scrollTrigger && window.scrollTrigger.onChartVisible) {
-    setupChartReplay(data);
-  }
+  // Chart replay on scroll disabled
 
   let resizeTimeout;
   window.addEventListener("resize", function () {

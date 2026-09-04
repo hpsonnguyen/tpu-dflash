@@ -5,18 +5,19 @@
     return Math.max(200, (container && container.offsetWidth) || 400);
   }
 
-  var margin = { top: 20, right: 30, bottom: 70, left: 50 };
-  var defaultTransition = 400;
+  var margin = { top: 28, right: 40, bottom: 80, left: 60 };
+  var defaultTransition = 0;
 
   var COLORS = {
-    baseline: "#64748b",
+    baseline: "#94a3b8",
     tpu: "#3b82f6",
     gpu: "#8b5cf6",
     dflash: "#10b981",
-    eagle3: "#f59e0b"
+    eagle3: "#f59e0b",
+    accent: "#f97316"
   };
 
-  var CATEGORY_COLORS = { math: "#4C72B0", code: "#55A868", chat: "#C44E52" };
+  var CATEGORY_COLORS = { math: "#3b82f6", code: "#10b981", chat: "#f43f5e" };
 
   function showTooltip(container, text, event) {
     var existing = document.querySelector(".chart-tooltip");
@@ -75,10 +76,10 @@
     var kpiRow = document.createElement("div");
     kpiRow.className = "dashboard-kpis";
     var metrics = [
-      { label: "Avg Speedup", value: avgSpeedup.toFixed(2) + "x", sub: "across 9 benchmarks", color: "#58a6ff" },
-      { label: "Peak Speedup", value: peakSpeedup.toFixed(2) + "x", sub: "on " + peakSpeedupDs, color: "#7ee787" },
-      { label: "Peak Throughput", value: peakTps.toFixed(0), sub: "TPS on " + peakTpsDs, color: "#d29922" },
-      { label: "GPU Tau Parity", value: tauPct.toFixed(1) + "%", sub: "math avg (vs A100)", color: "#f778ba" }
+      { label: "Avg Speedup", value: avgSpeedup.toFixed(2) + "x", sub: "across 9 benchmarks", color: "#3b82f6" },
+      { label: "Peak Speedup", value: peakSpeedup.toFixed(2) + "x", sub: "on " + peakSpeedupDs, color: "#10b981" },
+      { label: "Peak Throughput", value: peakTps.toFixed(0), sub: "TPS on " + peakTpsDs, color: "#f59e0b" },
+      { label: "GPU Tau Parity", value: tauPct.toFixed(1) + "%", sub: "math avg (vs A100)", color: "#8b5cf6" }
     ];
     metrics.forEach(function (m) {
       var card = document.createElement("div");
@@ -95,9 +96,9 @@
     wrapper.appendChild(chartDiv);
 
     var fullWidth = getContainerWidth(container) - 40;
-    var barMargin = { top: 10, right: 60, bottom: 50, left: 80 };
+    var barMargin = { top: 14, right: 70, bottom: 56, left: 100 };
     var w = fullWidth - barMargin.left - barMargin.right;
-    var h = datasets.length * 32;
+    var h = datasets.length * 40;
 
     var svg = d3.select(chartDiv).append("svg")
       .attr("width", w + barMargin.left + barMargin.right)
@@ -112,24 +113,24 @@
     var y = d3.scaleBand().domain(revDatasets).range([0, h]).padding(0.25);
     var x = d3.scaleLinear().domain([0, d3.max(speedups) * 1.25]).range([0, w]);
 
-    g.append("g").call(d3.axisLeft(y)).selectAll("text").attr("fill", "#c9d1d9").attr("font-size", 11);
+    g.append("g").call(d3.axisLeft(y)).selectAll("text").attr("fill", "#64748b").attr("font-size", 14);
     g.append("g").attr("transform", "translate(0," + h + ")").call(d3.axisBottom(x).ticks(5))
-      .selectAll("text").attr("fill", "#c9d1d9");
-    g.selectAll(".domain, .tick line").attr("stroke", "#30363d");
+      .selectAll("text").attr("fill", "#64748b");
+    g.selectAll(".domain, .tick line").attr("stroke", "#e2e8f0");
 
     g.append("line").attr("x1", x(1)).attr("x2", x(1)).attr("y1", 0).attr("y2", h)
-      .attr("stroke", "#30363d").attr("stroke-dasharray", "4,4");
+      .attr("stroke", "#cbd5e1").attr("stroke-dasharray", "4,4");
     g.append("line").attr("x1", x(avgSpeedup)).attr("x2", x(avgSpeedup)).attr("y1", 0).attr("y2", h)
-      .attr("stroke", "#58a6ff").attr("stroke-width", 2).attr("stroke-dasharray", "6,3");
+      .attr("stroke", "#3b82f6").attr("stroke-width", 2).attr("stroke-dasharray", "6,3");
     g.append("text").attr("x", x(avgSpeedup) + 6).attr("y", h + 28)
-      .attr("fill", "#58a6ff").attr("font-size", 11).attr("font-weight", 700)
+      .attr("fill", "#3b82f6").attr("font-size", 14).attr("font-weight", 700)
       .text("avg " + avgSpeedup.toFixed(2) + "x");
 
     g.selectAll(".bar-speedup").data(revDatasets).enter().append("rect")
       .attr("x", 0).attr("y", function (d) { return y(d); })
       .attr("width", 0).attr("height", y.bandwidth())
-      .attr("fill", function (d, i) { return CATEGORY_COLORS[revCategories[i]] || "#58a6ff"; })
-      .attr("rx", 3)
+      .attr("fill", function (d, i) { return CATEGORY_COLORS[revCategories[i]] || COLORS.tpu; })
+      .attr("rx", 4)
       .style("cursor", "pointer")
       .on("mouseenter", function (ev, d) {
         var idx = revDatasets.indexOf(d);
@@ -142,7 +143,7 @@
     g.selectAll(".bar-label").data(revDatasets).enter().append("text")
       .attr("x", function (d, i) { return x(revSpeedups[i]) + 4; })
       .attr("y", function (d) { return y(d) + y.bandwidth() / 2 + 4; })
-      .attr("fill", "#c9d1d9").attr("font-size", 10).attr("font-weight", 600)
+      .attr("fill", "#334155").attr("font-size", 13).attr("font-weight", 600)
       .text(function (d, i) { return revSpeedups[i].toFixed(2) + "x"; })
       .attr("opacity", 0).transition().delay(defaultTransition).attr("opacity", 1);
   }
@@ -160,25 +161,25 @@
     var avgSpeedup = d3.mean(speedups);
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 280;
+    var height = 360;
     var svg = d3.select(container).append("svg")
       .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom + 20);
+      .attr("height", height + margin.top + margin.bottom);
     var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var x = d3.scaleBand().domain(datasets).range([0, width]).padding(0.25);
     var y = d3.scaleLinear().domain([0, d3.max(speedups) * 1.25]).range([height, 0]);
 
     g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
     g.append("g").call(d3.axisLeft(y));
 
     g.append("line").attr("x1", 0).attr("x2", width).attr("y1", y(1)).attr("y2", y(1))
-      .attr("stroke", "#94a3b8").attr("stroke-dasharray", "4,4").attr("opacity", 0.6);
+      .attr("stroke", "#cbd5e1").attr("stroke-dasharray", "6,4");
     g.append("line").attr("x1", 0).attr("x2", width).attr("y1", y(avgSpeedup)).attr("y2", y(avgSpeedup))
-      .attr("stroke", "#DD8452").attr("stroke-dasharray", "4,4").attr("opacity", 0.6);
+      .attr("stroke", COLORS.accent).attr("stroke-dasharray", "6,3").attr("stroke-width", 2);
     g.append("text").attr("x", width - 4).attr("y", y(avgSpeedup) - 6)
-      .attr("text-anchor", "end").attr("font-size", 9).attr("fill", "#DD8452").attr("font-weight", 600)
+      .attr("text-anchor", "end").attr("font-size", 14).attr("fill", COLORS.accent).attr("font-weight", 600)
       .text("avg " + avgSpeedup.toFixed(2) + "x");
 
     container.style.position = "relative";
@@ -186,7 +187,7 @@
       .attr("x", function (d) { return x(d.dataset); })
       .attr("y", height).attr("width", x.bandwidth()).attr("height", 0)
       .attr("fill", function (d) { return CATEGORY_COLORS[d.category] || COLORS.tpu; })
-      .attr("rx", 3)
+      .attr("rx", 4)
       .style("cursor", "pointer")
       .on("mouseenter", function (ev, d) {
         showTooltip(container, d.dataset + ": " + (parseFloat(d.tpu_speedup) || 0).toFixed(2) + "x speedup", ev);
@@ -199,18 +200,18 @@
     g.selectAll(".bar-val").data(data).enter().append("text")
       .attr("x", function (d) { return x(d.dataset) + x.bandwidth() / 2; })
       .attr("y", function (d) { return y(parseFloat(d.tpu_speedup) || 0) - 4; })
-      .attr("text-anchor", "middle").attr("font-size", 9).attr("font-weight", 600)
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
       .text(function (d) { return (parseFloat(d.tpu_speedup) || 0).toFixed(2) + "x"; });
 
     datasets.forEach(function (ds, i) {
       g.append("text").attr("x", x(ds) + x.bandwidth() / 2).attr("y", height + 58)
-        .attr("text-anchor", "middle").attr("font-size", 8).attr("font-weight", 600)
+        .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
         .attr("fill", CATEGORY_COLORS[categories[i]] || "#64748b")
         .text(categories[i]);
     });
 
     g.append("text").attr("x", -height / 2).attr("y", -38).attr("transform", "rotate(-90)")
-      .attr("text-anchor", "middle").attr("font-size", 11).text("Speedup over baseline");
+      .attr("text-anchor", "middle").attr("font-size", 14).text("Speedup over baseline");
   }
 
   // ═══════════════════════════════════════════
@@ -225,7 +226,7 @@
     var dfTps = data.map(function (r) { return parseFloat(r.tpu_dflash_tps) || 0; });
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 280;
+    var height = 360;
     var svg = d3.select(container).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom);
@@ -237,19 +238,19 @@
     var y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
     g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x0))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
     g.append("g").call(d3.axisLeft(y));
 
     container.style.position = "relative";
     var series = [
-      { key: "baseline", label: "Baseline", color: "#A6CEE3", vals: baseTps },
-      { key: "dflash", label: "DFlash", color: "#DD8452", vals: dfTps }
+      { key: "baseline", label: "Baseline", color: COLORS.baseline, vals: baseTps },
+      { key: "dflash", label: "DFlash", color: COLORS.tpu, vals: dfTps }
     ];
     series.forEach(function (s) {
       g.selectAll(".bar-" + s.key).data(datasets).enter().append("rect")
         .attr("x", function (d) { return x0(d) + x1(s.key); })
         .attr("y", height).attr("width", x1.bandwidth()).attr("height", 0)
-        .attr("fill", s.color).attr("rx", 2)
+        .attr("fill", s.color).attr("rx", 4)
         .style("cursor", "pointer")
         .on("mouseenter", function (ev, d) {
           var idx = datasets.indexOf(d);
@@ -264,17 +265,17 @@
     g.selectAll(".bar-val-df").data(datasets).enter().append("text")
       .attr("x", function (d) { return x0(d) + x1("dflash") + x1.bandwidth() / 2; })
       .attr("y", function (d, i) { return y(dfTps[i]) - 4; })
-      .attr("text-anchor", "middle").attr("font-size", 8).attr("font-weight", 600).attr("fill", "#DD8452")
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600).attr("fill", COLORS.tpu)
       .text(function (d, i) { return dfTps[i].toFixed(0); });
 
     var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",4)");
     series.forEach(function (s, i) {
-      legend.append("rect").attr("x", i * 90).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", s.color).attr("rx", 2);
-      legend.append("text").attr("x", i * 90 + 16).attr("y", 10).attr("font-size", 11).text(s.label);
+      legend.append("rect").attr("x", i * 90).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", s.color).attr("rx", 4);
+      legend.append("text").attr("x", i * 90 + 16).attr("y", 10).attr("font-size", 14).text(s.label);
     });
 
     g.append("text").attr("x", -height / 2).attr("y", -38).attr("transform", "rotate(-90)")
-      .attr("text-anchor", "middle").attr("font-size", 11).text("Tokens per Second (TPS)");
+      .attr("text-anchor", "middle").attr("font-size", 14).text("Tokens per Second (TPS)");
   }
 
   // ═══════════════════════════════════════════
@@ -313,8 +314,8 @@
       div.style.minWidth = "140px";
       container.appendChild(div);
 
-      var w = Math.max(140, panelWidth) - margin.left - 20;
-      var h = 200;
+      var w = Math.max(160, panelWidth) - margin.left - 20;
+      var h = 340;
       var svg = d3.select(div).append("svg")
         .attr("width", w + margin.left + 20)
         .attr("height", h + margin.top + margin.bottom);
@@ -330,7 +331,7 @@
         .attr("x", function (d) { return x(d); })
         .attr("y", h).attr("width", x.bandwidth()).attr("height", 0)
         .attr("fill", function (d, i) { return CATEGORY_COLORS[catKeys[i]]; })
-        .attr("rx", 3)
+        .attr("rx", 4)
         .style("cursor", "pointer")
         .on("mouseenter", function (ev, d) {
           var idx = catNames.indexOf(d);
@@ -344,11 +345,11 @@
       g.selectAll(".cat-lbl").data(catNames).enter().append("text")
         .attr("x", function (d) { return x(d) + x.bandwidth() / 2; })
         .attr("y", function (d, i) { return y(p.vals[i]) - 4; })
-        .attr("text-anchor", "middle").attr("font-size", 9).attr("font-weight", 600)
+        .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
         .text(function (d, i) { return p.fmt(p.vals[i]); });
 
       svg.append("text").attr("x", (w + margin.left + 20) / 2).attr("y", 14)
-        .attr("text-anchor", "middle").attr("font-size", 12).attr("font-weight", 600)
+        .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
         .text(p.title);
     });
   }
@@ -398,11 +399,11 @@
       container.appendChild(div);
 
       var w = Math.max(200, halfWidth) - margin.left - margin.right;
-      var h = 240;
+      var h = 350;
       var svg = d3.select(div).append("svg")
         .attr("width", w + margin.left + margin.right)
-        .attr("height", h + margin.top + margin.bottom + 10);
-      var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + (margin.top + 10) + ")");
+        .attr("height", h + margin.top + margin.bottom);
+      var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
       var x0 = d3.scaleBand().domain(datasets).range([0, w]).padding(0.2);
       var x1 = d3.scaleBand().domain(["v5p", "gpu"]).range([0, x0.bandwidth()]).padding(0.08);
@@ -410,18 +411,18 @@
       var y = d3.scaleLinear().domain([0, yMax]).range([h, 0]);
 
       g.append("g").attr("transform", "translate(0," + h + ")").call(d3.axisBottom(x0))
-        .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
+        .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
       g.append("g").call(d3.axisLeft(y));
 
       var seriesData = [
-        { key: "v5p", label: "TPU V5P", color: "#DD8452", vals: cfg.v5Vals },
-        { key: "gpu", label: "GPU A100", color: "#55A868", vals: cfg.gpuVals }
+        { key: "v5p", label: "TPU V5P", color: COLORS.tpu, vals: cfg.v5Vals },
+        { key: "gpu", label: "GPU A100", color: COLORS.gpu, vals: cfg.gpuVals }
       ];
       seriesData.forEach(function (s) {
         g.selectAll(".bar-" + s.key).data(datasets).enter().append("rect")
           .attr("x", function (d) { return x0(d) + x1(s.key); })
           .attr("y", h).attr("width", x1.bandwidth()).attr("height", 0)
-          .attr("fill", s.color).attr("rx", 2)
+          .attr("fill", s.color).attr("rx", 4)
           .style("cursor", "pointer")
           .on("mouseenter", function (ev, d) {
             var idx = datasets.indexOf(d);
@@ -436,11 +437,11 @@
       if (cfg.annotations) {
         datasets.forEach(function (ds, i) {
           var pct = cfg.annotations[i];
-          var color = pct >= 100 ? "#3fb950" : (pct >= 90 ? "#d29922" : "#f85149");
+          var color = pct >= 100 ? "#10b981" : (pct >= 90 ? "#f59e0b" : "#f43f5e");
           g.append("text")
             .attr("x", x0(ds) + x0.bandwidth() / 2)
             .attr("y", y(Math.max(cfg.v5Vals[i], cfg.gpuVals[i])) - 6)
-            .attr("text-anchor", "middle").attr("font-size", 10).attr("font-weight", 600)
+            .attr("text-anchor", "middle").attr("font-size", 13).attr("font-weight", 600)
             .attr("fill", color).text(pct.toFixed(0) + "%");
         });
       } else {
@@ -449,20 +450,20 @@
             g.append("text")
               .attr("x", x0(ds) + x1(s.key) + x1.bandwidth() / 2)
               .attr("y", y(s.vals[i]) - 4)
-              .attr("text-anchor", "middle").attr("font-size", 8).attr("font-weight", 600)
+              .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
               .text(s.vals[i].toFixed(2));
           });
         });
       }
 
       svg.append("text").attr("x", (w + margin.left + margin.right) / 2).attr("y", 14)
-        .attr("text-anchor", "middle").attr("font-size", 12).attr("font-weight", 600)
+        .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
         .text(cfg.title);
 
       var legend = g.append("g").attr("transform", "translate(0," + (h + 36) + ")");
       seriesData.forEach(function (s, i) {
-        legend.append("rect").attr("x", i * 100).attr("y", 0).attr("width", 10).attr("height", 10).attr("fill", s.color).attr("rx", 2);
-        legend.append("text").attr("x", i * 100 + 14).attr("y", 9).attr("font-size", 10).text(s.label);
+        legend.append("rect").attr("x", i * 100).attr("y", 0).attr("width", 10).attr("height", 10).attr("fill", s.color).attr("rx", 4);
+        legend.append("text").attr("x", i * 100 + 14).attr("y", 9).attr("font-size", 13).text(s.label);
       });
     });
   }
@@ -477,7 +478,7 @@
     var positions = [];
     for (var i = 0; i <= 15; i++) positions.push(i);
 
-    var viridisColors = ["#440154", "#482878", "#3e4989", "#31688e", "#26828e", "#1f9e89", "#35b779", "#6ece58", "#b5de2b"];
+    var seriesColors = [COLORS.tpu, COLORS.gpu, "#06b6d4", COLORS.dflash, COLORS.accent, "#f43f5e", COLORS.eagle3, "#6366f1", "#14b8a6"];
 
     var series = [];
     data.forEach(function (r, idx) {
@@ -489,27 +490,46 @@
     });
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 280;
+    var height = 360;
     var svg = d3.select(container).append("svg")
       .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom + 30);
+      .attr("height", height + margin.top + margin.bottom);
     var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var x = d3.scaleLinear().domain([0, 15]).range([0, width]);
     var y = d3.scaleLinear().domain([0, 1.05]).range([height, 0]);
 
-    g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x).tickFormat(function (d) { return d; }));
-    g.append("g").call(d3.axisLeft(y).tickFormat(d3.format(".0%")));
+    [0.25, 0.5, 0.75, 1.0].forEach(function (tick) {
+      g.append("line").attr("x1", 0).attr("x2", width).attr("y1", y(tick)).attr("y2", y(tick))
+        .attr("stroke", "#e2e8f0").attr("stroke-dasharray", "4,3");
+    });
 
-    g.append("text").attr("x", width / 2).attr("y", height + 38).attr("text-anchor", "middle").attr("font-size", 11).text("Draft Token Position");
-    g.append("text").attr("x", -height / 2).attr("y", -38).attr("transform", "rotate(-90)")
-      .attr("text-anchor", "middle").attr("font-size", 11).text("Acceptance Rate");
+    g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x).tickFormat(function (d) { return d; }))
+      .selectAll("text").attr("font-size", 13);
+    g.append("g").call(d3.axisLeft(y).tickFormat(d3.format(".0%")))
+      .selectAll("text").attr("font-size", 13);
+    g.selectAll(".domain, .tick line").attr("stroke", "#e2e8f0");
+
+    g.append("text").attr("x", width / 2).attr("y", height + 42).attr("text-anchor", "middle").attr("font-size", 14).attr("fill", "#475569").text("Draft Token Position");
+    g.append("text").attr("x", -height / 2).attr("y", -42).attr("transform", "rotate(-90)")
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("fill", "#475569").text("Acceptance Rate");
 
     var line = d3.line().x(function (d) { return x(d.pos); }).y(function (d) { return y(d.rate); }).curve(d3.curveMonotoneX);
 
+    var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",4)");
+    var xOff = 0;
+    series.forEach(function (s) {
+      var color = seriesColors[s.colorIdx % seriesColors.length];
+      legend.append("line").attr("x1", xOff).attr("x2", xOff + 16).attr("y1", 6).attr("y2", 6)
+        .attr("stroke", color).attr("stroke-width", 2.5);
+      legend.append("text").attr("x", xOff + 20).attr("y", 10).attr("font-size", 13).attr("fill", "#475569")
+        .text(s.dataset);
+      xOff += 90;
+    });
+
     container.style.position = "relative";
     series.forEach(function (s) {
-      var color = viridisColors[s.colorIdx % viridisColors.length];
+      var color = seriesColors[s.colorIdx % seriesColors.length];
       var path = g.append("path").datum(s.points)
         .attr("fill", "none").attr("stroke", color).attr("stroke-width", 2.5).attr("d", line);
       var node = path.node();
@@ -520,24 +540,12 @@
 
       g.selectAll(".dot-" + s.dataset).data(s.points).enter().append("circle")
         .attr("cx", function (d) { return x(d.pos); }).attr("cy", function (d) { return y(d.rate); })
-        .attr("r", 3).attr("fill", color).attr("stroke", "#fff").attr("stroke-width", 1)
+        .attr("r", 3.5).attr("fill", color).attr("stroke", "#fff").attr("stroke-width", 1.5)
         .style("cursor", "pointer")
         .on("mouseenter", function (ev, d) {
           showTooltip(container, s.dataset + " pos " + d.pos + ": " + (d.rate * 100).toFixed(1) + "%", ev);
         })
         .on("mouseleave", function () { hideTooltip(); });
-    });
-
-    var legendY = height + margin.top + margin.bottom;
-    var legend = svg.append("g").attr("transform", "translate(" + margin.left + "," + legendY + ")");
-    var xOff = 0;
-    series.forEach(function (s) {
-      var color = viridisColors[s.colorIdx % viridisColors.length];
-      legend.append("line").attr("x1", xOff).attr("x2", xOff + 16).attr("y1", 4).attr("y2", 4)
-        .attr("stroke", color).attr("stroke-width", 2.5);
-      legend.append("text").attr("x", xOff + 20).attr("y", 8).attr("font-size", 9)
-        .text(s.dataset);
-      xOff += 90;
     });
   }
 
@@ -553,7 +561,7 @@
     var dfTpot = data.map(function (r) { return parseFloat(r.tpu_dflash_tpot_ms) || 0; });
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 280;
+    var height = 360;
     var svg = d3.select(container).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom);
@@ -565,19 +573,19 @@
     var y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
     g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x0))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
     g.append("g").call(d3.axisLeft(y));
 
     container.style.position = "relative";
     var series = [
-      { key: "baseline", label: "Baseline", color: "#A6CEE3", vals: baseTpot },
-      { key: "dflash", label: "DFlash", color: "#DD8452", vals: dfTpot }
+      { key: "baseline", label: "Baseline", color: COLORS.baseline, vals: baseTpot },
+      { key: "dflash", label: "DFlash", color: COLORS.tpu, vals: dfTpot }
     ];
     series.forEach(function (s) {
       g.selectAll(".bar-" + s.key).data(datasets).enter().append("rect")
         .attr("x", function (d) { return x0(d) + x1(s.key); })
         .attr("y", height).attr("width", x1.bandwidth()).attr("height", 0)
-        .attr("fill", s.color).attr("rx", 2)
+        .attr("fill", s.color).attr("rx", 4)
         .style("cursor", "pointer")
         .on("mouseenter", function (ev, d) {
           var idx = datasets.indexOf(d);
@@ -592,21 +600,21 @@
     g.selectAll(".bar-val-df").data(datasets).enter().append("text")
       .attr("x", function (d) { return x0(d) + x1("dflash") + x1.bandwidth() / 2; })
       .attr("y", function (d, i) { return y(dfTpot[i]) - 4; })
-      .attr("text-anchor", "middle").attr("font-size", 8).attr("font-weight", 600).attr("fill", "#DD8452")
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600).attr("fill", COLORS.tpu)
       .text(function (d, i) { return dfTpot[i].toFixed(2); });
 
     var bestIdx = dfTpot.indexOf(d3.min(dfTpot));
     g.append("text").attr("x", width - 4).attr("y", y(d3.max(baseTpot) * 0.5))
-      .attr("text-anchor", "end").attr("font-size", 9).attr("fill", "#DD8452").attr("font-weight", 600)
+      .attr("text-anchor", "end").attr("font-size", 14).attr("fill", COLORS.accent).attr("font-weight", 600)
       .text("best: " + d3.min(dfTpot).toFixed(2) + " ms (" + datasets[bestIdx] + ")");
 
     g.append("text").attr("x", -height / 2).attr("y", -38).attr("transform", "rotate(-90)")
-      .attr("text-anchor", "middle").attr("font-size", 11).text("TPOT (ms) — lower is better");
+      .attr("text-anchor", "middle").attr("font-size", 14).text("TPOT (ms) — lower is better");
 
     var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",4)");
     series.forEach(function (s, i) {
-      legend.append("rect").attr("x", i * 90).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", s.color).attr("rx", 2);
-      legend.append("text").attr("x", i * 90 + 16).attr("y", 10).attr("font-size", 11).text(s.label);
+      legend.append("rect").attr("x", i * 90).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", s.color).attr("rx", 4);
+      legend.append("text").attr("x", i * 90 + 16).attr("y", 10).attr("font-size", 14).text(s.label);
     });
   }
 
@@ -623,28 +631,28 @@
     var exactMatches = data.map(function (r) { return r.exact_match || ""; });
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 280;
+    var height = 360;
     var svg = d3.select(container).append("svg")
       .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom + 20);
+      .attr("height", height + margin.top + margin.bottom);
     var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var x = d3.scaleBand().domain(datasets).range([0, width]).padding(0.25);
     var y = d3.scaleLinear().domain([0, 100]).range([height, 0]);
 
     g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
     g.append("g").call(d3.axisLeft(y).tickFormat(function (d) { return d + "%"; }));
 
     g.append("line").attr("x1", 0).attr("x2", width).attr("y1", y(50)).attr("y2", y(50))
-      .attr("stroke", "#94a3b8").attr("stroke-dasharray", "4,4").attr("opacity", 0.5);
+      .attr("stroke", "#cbd5e1").attr("stroke-dasharray", "6,4");
 
     container.style.position = "relative";
     g.selectAll(".bar-quality").data(data).enter().append("rect")
       .attr("x", function (d) { return x(d.dataset); })
       .attr("y", height).attr("width", x.bandwidth()).attr("height", 0)
       .attr("fill", function (d) { return CATEGORY_COLORS[d.category] || COLORS.baseline; })
-      .attr("rx", 3)
+      .attr("rx", 4)
       .style("cursor", "pointer")
       .on("mouseenter", function (ev, d) {
         var rate = parseFloat((d.match_rate || "0").replace("%", "")) || 0;
@@ -658,25 +666,19 @@
     g.selectAll(".bar-lbl").data(datasets).enter().append("text")
       .attr("x", function (d) { return x(d) + x.bandwidth() / 2; })
       .attr("y", function (d, i) { return y(matchRates[i]) - 4; })
-      .attr("text-anchor", "middle").attr("font-size", 9).attr("font-weight", 600)
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
       .text(function (d, i) { return exactMatches[i]; });
 
     g.append("text").attr("x", -height / 2).attr("y", -38).attr("transform", "rotate(-90)")
-      .attr("text-anchor", "middle").attr("font-size", 11).text("Exact Token Match Rate (%)");
+      .attr("text-anchor", "middle").attr("font-size", 14).text("Exact Token Match Rate (%)");
 
     var catLegend = svg.append("g").attr("transform", "translate(" + margin.left + ",4)");
     ["math", "code", "chat"].forEach(function (c, i) {
       catLegend.append("rect").attr("x", i * 70).attr("y", 0).attr("width", 10).attr("height", 10)
-        .attr("fill", CATEGORY_COLORS[c]).attr("rx", 2);
-      catLegend.append("text").attr("x", i * 70 + 14).attr("y", 9).attr("font-size", 10)
+        .attr("fill", CATEGORY_COLORS[c]).attr("rx", 4);
+      catLegend.append("text").attr("x", i * 70 + 14).attr("y", 9).attr("font-size", 13)
         .text(c.charAt(0).toUpperCase() + c.slice(1));
     });
-
-    svg.append("text")
-      .attr("x", (width + margin.left + margin.right) / 2)
-      .attr("y", height + margin.top + margin.bottom + 14)
-      .attr("text-anchor", "middle").attr("font-size", 9).attr("fill", "#8b949e").attr("font-style", "italic")
-      .text("Mismatches are bf16 floating-point divergence (batch-16 verify vs single-token), not correctness errors");
   }
 
   // ═══════════════════════════════════════════
@@ -697,10 +699,10 @@
     });
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 280;
+    var height = 360;
     var svg = d3.select(container).append("svg")
       .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom + 20);
+      .attr("height", height + margin.top + margin.bottom);
     var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var x0 = d3.scaleBand().domain(datasets).range([0, width]).padding(0.2);
@@ -709,22 +711,22 @@
     var y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
     g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x0))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
     g.append("g").call(d3.axisLeft(y));
 
     g.append("line").attr("x1", 0).attr("x2", width).attr("y1", y(1)).attr("y2", y(1))
-      .attr("stroke", "#94a3b8").attr("stroke-dasharray", "4,4");
+      .attr("stroke", "#cbd5e1").attr("stroke-dasharray", "6,4");
 
     container.style.position = "relative";
     var series = [
-      { key: "v4", label: "TPU V4", color: "#4C72B0", vals: v4Speedup },
-      { key: "v5p", label: "TPU V5P", color: "#DD8452", vals: v5pSpeedup }
+      { key: "v4", label: "TPU V4", color: "#64748b", vals: v4Speedup },
+      { key: "v5p", label: "TPU V5P", color: COLORS.tpu, vals: v5pSpeedup }
     ];
     series.forEach(function (s) {
       g.selectAll(".bar-" + s.key).data(datasets).enter().append("rect")
         .attr("x", function (d) { return x0(d) + x1(s.key); })
         .attr("y", height).attr("width", x1.bandwidth()).attr("height", 0)
-        .attr("fill", s.color).attr("rx", 2)
+        .attr("fill", s.color).attr("rx", 4)
         .style("cursor", "pointer")
         .on("mouseenter", function (ev, d) {
           var idx = datasets.indexOf(d);
@@ -738,23 +740,23 @@
       g.selectAll(".lbl-" + s.key).data(datasets).enter().append("text")
         .attr("x", function (d) { return x0(d) + x1(s.key) + x1.bandwidth() / 2; })
         .attr("y", function (d, i) { return y(s.vals[i]) - 4; })
-        .attr("text-anchor", "middle").attr("font-size", 7).attr("font-weight", 600)
+        .attr("text-anchor", "middle").attr("font-size", 13).attr("font-weight", 600)
         .text(function (d, i) { return s.vals[i].toFixed(2); });
     });
 
     datasets.forEach(function (ds, i) {
       g.append("text").attr("x", x0(ds) + x0.bandwidth() / 2).attr("y", height + 58)
-        .attr("text-anchor", "middle").attr("font-size", 8).attr("font-weight", 600)
+        .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
         .attr("fill", CATEGORY_COLORS[categories[i]] || "#64748b").text(categories[i]);
     });
 
     g.append("text").attr("x", -height / 2).attr("y", -38).attr("transform", "rotate(-90)")
-      .attr("text-anchor", "middle").attr("font-size", 11).text("Speedup over baseline");
+      .attr("text-anchor", "middle").attr("font-size", 14).text("Speedup over baseline");
 
     var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",4)");
     series.forEach(function (s, i) {
-      legend.append("rect").attr("x", i * 90).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", s.color).attr("rx", 2);
-      legend.append("text").attr("x", i * 90 + 16).attr("y", 10).attr("font-size", 11).text(s.label);
+      legend.append("rect").attr("x", i * 90).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", s.color).attr("rx", 4);
+      legend.append("text").attr("x", i * 90 + 16).attr("y", 10).attr("font-size", 14).text(s.label);
     });
   }
 
@@ -770,7 +772,7 @@
     var dflashImp = data.map(function (r) { return parseFloat((r.dflash_improvement || "0").replace("x", "")) || 0; });
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 280;
+    var height = 360;
     var svg = d3.select(container).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom);
@@ -782,22 +784,22 @@
     var y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
     g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x0))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
     g.append("g").call(d3.axisLeft(y));
 
     g.append("line").attr("x1", 0).attr("x2", width).attr("y1", y(1)).attr("y2", y(1))
-      .attr("stroke", "#94a3b8").attr("stroke-dasharray", "4,4");
+      .attr("stroke", "#cbd5e1").attr("stroke-dasharray", "6,4");
 
     container.style.position = "relative";
     var series = [
-      { key: "baseline", label: "Baseline Improvement", color: "#A6CEE3", vals: baselineImp },
-      { key: "dflash", label: "DFlash Improvement", color: "#DD8452", vals: dflashImp }
+      { key: "baseline", label: "Baseline Improvement", color: COLORS.baseline, vals: baselineImp },
+      { key: "dflash", label: "DFlash Improvement", color: COLORS.tpu, vals: dflashImp }
     ];
     series.forEach(function (s) {
       g.selectAll(".bar-" + s.key).data(datasets).enter().append("rect")
         .attr("x", function (d) { return x0(d) + x1(s.key); })
         .attr("y", height).attr("width", x1.bandwidth()).attr("height", 0)
-        .attr("fill", s.color).attr("rx", 2)
+        .attr("fill", s.color).attr("rx", 4)
         .style("cursor", "pointer")
         .on("mouseenter", function (ev, d) {
           var idx = datasets.indexOf(d);
@@ -811,17 +813,17 @@
       g.selectAll(".lbl-" + s.key).data(datasets).enter().append("text")
         .attr("x", function (d) { return x0(d) + x1(s.key) + x1.bandwidth() / 2; })
         .attr("y", function (d, i) { return y(s.vals[i]) - 4; })
-        .attr("text-anchor", "middle").attr("font-size", 8).attr("font-weight", 600)
+        .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
         .text(function (d, i) { return s.vals[i].toFixed(2) + "x"; });
     });
 
     g.append("text").attr("x", -height / 2).attr("y", -38).attr("transform", "rotate(-90)")
-      .attr("text-anchor", "middle").attr("font-size", 11).text("Improvement Factor (V5P / V4)");
+      .attr("text-anchor", "middle").attr("font-size", 14).text("Improvement Factor (V5P / V4)");
 
     var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",4)");
     series.forEach(function (s, i) {
-      legend.append("rect").attr("x", i * 150).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", s.color).attr("rx", 2);
-      legend.append("text").attr("x", i * 150 + 16).attr("y", 10).attr("font-size", 11).text(s.label);
+      legend.append("rect").attr("x", i * 150).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", s.color).attr("rx", 4);
+      legend.append("text").attr("x", i * 150 + 16).attr("y", 10).attr("font-size", 14).text(s.label);
     });
   }
 
@@ -845,28 +847,27 @@
     ];
     var total = d3.sum(components, function (c) { return c.value; });
 
-    var set2 = ["#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3"];
+    var set2 = ["#3b82f6", "#10b981", "#f97316", "#f43f5e", "#8b5cf6", "#f59e0b", "#06b6d4", "#94a3b8"];
 
     container.style.position = "relative";
     container.style.display = "flex";
     container.style.flexDirection = "column";
-    container.style.gap = "16px";
+    container.style.gap = "8px";
     container.style.overflow = "visible";
 
-    // Pie chart — centered on top
     var pieDiv = document.createElement("div");
     pieDiv.style.display = "flex";
     pieDiv.style.justifyContent = "center";
     pieDiv.style.overflow = "visible";
     container.appendChild(pieDiv);
 
-    var pieSize = 160;
+    var pieSize = 140;
     var piePad = 60;
     var pieSvgW = pieSize + piePad * 2;
     var pieSvg = d3.select(pieDiv).append("svg")
-      .attr("width", pieSvgW).attr("height", pieSize + 50)
+      .attr("width", pieSvgW).attr("height", pieSize + 40)
       .style("overflow", "visible").style("max-width", "100%");
-    var pieG = pieSvg.append("g").attr("transform", "translate(" + pieSvgW / 2 + "," + (pieSize / 2 + 30) + ")");
+    var pieG = pieSvg.append("g").attr("transform", "translate(" + pieSvgW / 2 + "," + (pieSize / 2 + 24) + ")");
 
     var pie = d3.pie().value(function (d) { return d.value; }).sort(null);
     var radius = pieSize / 2;
@@ -901,26 +902,25 @@
         var mid = (d.startAngle + d.endAngle) / 2;
         return mid < Math.PI ? "start" : "end";
       })
-      .attr("font-size", 8).attr("fill", function (d) {
+      .attr("font-size", 14).attr("fill", function (d) {
         return (d.data.value / total * 100) > 8 ? "#fff" : "#334155";
       })
       .attr("font-weight", function (d) { return (d.data.value / total * 100) > 8 ? 600 : 400; })
       .text(function (d) { return (d.data.value / total * 100) > 3 ? (d.data.value / total * 100).toFixed(0) + "%" : ""; });
 
     pieSvg.append("text").attr("x", pieSvgW / 2).attr("y", 14)
-      .attr("text-anchor", "middle").attr("font-size", 11).attr("font-weight", 600)
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
       .text("Proportion of Step Time");
 
-    // Horizontal bar — below pie
     var barDiv = document.createElement("div");
     barDiv.style.overflow = "visible";
     container.appendChild(barDiv);
 
-    var barMargin = { top: 30, right: 50, bottom: 30, left: 100 };
+    var barMargin = { top: 26, right: 50, bottom: 20, left: 100 };
     var revComp = components.slice().reverse();
     var bw = getContainerWidth(container) - barMargin.left - barMargin.right;
     if (bw < 80) bw = 150;
-    var bh = revComp.length * 26;
+    var bh = revComp.length * 24;
 
     var barSvg = d3.select(barDiv).append("svg")
       .attr("width", bw + barMargin.left + barMargin.right)
@@ -931,14 +931,14 @@
     var yBar = d3.scaleBand().domain(revComp.map(function (c) { return c.label; })).range([0, bh]).padding(0.3);
     var xBar = d3.scaleLinear().domain([0, d3.max(components, function (c) { return c.value; }) * 1.2]).range([0, bw]);
 
-    barG.append("g").call(d3.axisLeft(yBar)).selectAll("text").attr("font-size", 9);
+    barG.append("g").call(d3.axisLeft(yBar)).selectAll("text").attr("font-size", 14);
     barG.append("g").attr("transform", "translate(0," + bh + ")").call(d3.axisBottom(xBar).ticks(5));
 
     barG.selectAll(".prof-bar").data(revComp).enter().append("rect")
       .attr("x", 0).attr("y", function (d) { return yBar(d.label); })
       .attr("width", 0).attr("height", yBar.bandwidth())
       .attr("fill", function (d, i) { return set2[revComp.length - 1 - i]; })
-      .attr("rx", 3)
+      .attr("rx", 4)
       .style("cursor", "pointer")
       .on("mouseenter", function (ev, d) {
         showTooltip(container, d.label + ": " + d.value.toFixed(2) + " ms", ev);
@@ -950,10 +950,10 @@
     barG.selectAll(".prof-lbl").data(revComp).enter().append("text")
       .attr("x", function (d) { return xBar(d.value) + 4; })
       .attr("y", function (d) { return yBar(d.label) + yBar.bandwidth() / 2 + 4; })
-      .attr("font-size", 9).text(function (d) { return d.value.toFixed(2) + " ms"; });
+      .attr("font-size", 14).text(function (d) { return d.value.toFixed(2) + " ms"; });
 
     barSvg.append("text").attr("x", (bw + barMargin.left + barMargin.right) / 2).attr("y", 16)
-      .attr("text-anchor", "middle").attr("font-size", 11).attr("font-weight", 600)
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
       .text("Per-Component Latency (total ~ " + total.toFixed(1) + " ms)");
   }
 
@@ -988,7 +988,7 @@
     var eVals = datasets.map(function (d) { return eagleSpeedup[d] || 0; });
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 280;
+    var height = 360;
     var svg = d3.select(container).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom);
@@ -1002,23 +1002,23 @@
     var y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
     g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x0))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
     g.append("g").call(d3.axisLeft(y));
 
     g.append("line").attr("x1", 0).attr("x2", width).attr("y1", y(1)).attr("y2", y(1))
-      .attr("stroke", "#94a3b8").attr("stroke-dasharray", "4,4");
+      .attr("stroke", "#cbd5e1").attr("stroke-dasharray", "6,4");
 
     container.style.position = "relative";
     var methods = [
-      { key: "standalone", label: "DFlash Standalone", color: "#4C72B0", vals: sVals },
-      { key: "vllm", label: "DFlash vLLM Pipeline", color: "#C44E52", vals: vVals },
-      { key: "eagle3", label: "Eagle3 (Llama)", color: "#55A868", vals: eVals }
+      { key: "standalone", label: "DFlash Standalone", color: COLORS.tpu, vals: sVals },
+      { key: "vllm", label: "DFlash vLLM Pipeline", color: COLORS.dflash, vals: vVals },
+      { key: "eagle3", label: "Eagle3 (Llama)", color: COLORS.eagle3, vals: eVals }
     ];
     methods.forEach(function (m) {
       g.selectAll(".bar-" + m.key).data(datasets).enter().append("rect")
         .attr("x", function (d) { return x0(d) + x1(m.key); })
         .attr("y", height).attr("width", x1.bandwidth()).attr("height", 0)
-        .attr("fill", m.color).attr("rx", 2)
+        .attr("fill", m.color).attr("rx", 4)
         .style("cursor", "pointer")
         .on("mouseenter", function (ev, d) {
           var idx = datasets.indexOf(d);
@@ -1032,17 +1032,17 @@
       g.selectAll(".lbl-" + m.key).data(datasets).enter().append("text")
         .attr("x", function (d) { return x0(d) + x1(m.key) + x1.bandwidth() / 2; })
         .attr("y", function (d, i) { return y(m.vals[i]) - 3; })
-        .attr("text-anchor", "middle").attr("font-size", 7).attr("font-weight", 600)
+        .attr("text-anchor", "middle").attr("font-size", 13).attr("font-weight", 600)
         .text(function (d, i) { return m.vals[i] > 0 ? m.vals[i].toFixed(2) : ""; });
     });
 
     g.append("text").attr("x", -height / 2).attr("y", -38).attr("transform", "rotate(-90)")
-      .attr("text-anchor", "middle").attr("font-size", 11).text("Speedup over Baseline");
+      .attr("text-anchor", "middle").attr("font-size", 14).text("Speedup over Baseline");
 
     var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",4)");
     methods.forEach(function (m, i) {
-      legend.append("rect").attr("x", i * 140).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", m.color).attr("rx", 2);
-      legend.append("text").attr("x", i * 140 + 16).attr("y", 10).attr("font-size", 10).text(m.label);
+      legend.append("rect").attr("x", i * 140).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", m.color).attr("rx", 4);
+      legend.append("text").attr("x", i * 140 + 16).attr("y", 10).attr("font-size", 13).text(m.label);
     });
   }
 
@@ -1056,62 +1056,6 @@
     var COST_V5P = 2.10, COST_V4 = 3.22, COST_A100 = 5.07, GPU_BASELINE_TPS = 100;
 
     container.style.position = "relative";
-    container.style.display = "flex";
-    container.style.gap = "12px";
-    container.style.flexWrap = "wrap";
-
-    // Left: hourly rates
-    var rateDiv = document.createElement("div");
-    rateDiv.style.flex = "0 0 200px";
-    rateDiv.style.minWidth = "180px";
-    container.appendChild(rateDiv);
-
-    var hw = ["TPU V5P", "TPU V4", "GPU A100"];
-    var rates = [COST_V5P, COST_V4, COST_A100];
-    var hwColors = ["#DD8452", "#4C72B0", "#55A868"];
-
-    var rateW = 160;
-    var rateH = 200;
-    var rateSvg = d3.select(rateDiv).append("svg")
-      .attr("width", rateW + 60).attr("height", rateH + margin.top + margin.bottom);
-    var rateG = rateSvg.append("g").attr("transform", "translate(40," + margin.top + ")");
-
-    var xRate = d3.scaleBand().domain(hw).range([0, rateW]).padding(0.3);
-    var yRate = d3.scaleLinear().domain([0, d3.max(rates) * 1.3]).range([rateH, 0]);
-
-    rateG.append("g").attr("transform", "translate(0," + rateH + ")").call(d3.axisBottom(xRate))
-      .selectAll("text").attr("font-size", 9).attr("transform", "rotate(-40)").style("text-anchor", "end").attr("dx", "-0.4em").attr("dy", "0.2em");
-    rateG.append("g").call(d3.axisLeft(yRate).ticks(4));
-
-    rateG.selectAll(".rate-bar").data(hw).enter().append("rect")
-      .attr("x", function (d) { return xRate(d); })
-      .attr("y", rateH).attr("width", xRate.bandwidth()).attr("height", 0)
-      .attr("fill", function (d, i) { return hwColors[i]; }).attr("rx", 3)
-      .style("cursor", "pointer")
-      .on("mouseenter", function (ev, d) {
-        var idx = hw.indexOf(d);
-        showTooltip(container, d + ": $" + rates[idx].toFixed(2) + "/hr", ev);
-      })
-      .on("mouseleave", function () { hideTooltip(); })
-      .transition().duration(defaultTransition)
-      .attr("y", function (d, i) { return yRate(rates[i]); })
-      .attr("height", function (d, i) { return rateH - yRate(rates[i]); });
-
-    rateG.selectAll(".rate-lbl").data(hw).enter().append("text")
-      .attr("x", function (d) { return xRate(d) + xRate.bandwidth() / 2; })
-      .attr("y", function (d, i) { return yRate(rates[i]) - 4; })
-      .attr("text-anchor", "middle").attr("font-size", 10).attr("font-weight", 600)
-      .text(function (d, i) { return "$" + rates[i].toFixed(2); });
-
-    rateSvg.append("text").attr("x", (rateW + 60) / 2).attr("y", 14)
-      .attr("text-anchor", "middle").attr("font-size", 11).attr("font-weight", 600)
-      .text("Hourly Rate ($/hr)");
-
-    // Right: cost per M tokens
-    var tokenDiv = document.createElement("div");
-    tokenDiv.style.flex = "1";
-    tokenDiv.style.minWidth = "300px";
-    container.appendChild(tokenDiv);
 
     var datasets = v5pData.map(function (r) { return r.dataset; });
     var categories = v5pData.map(function (r) { return r.category; });
@@ -1134,10 +1078,10 @@
     var v4Cost = v4Tps.map(function (t) { return costPerM(COST_V4, t); });
     var gpuCost = gpuTps.map(function (t) { return costPerM(COST_A100, t); });
 
-    var tokenW = getContainerWidth(tokenDiv) - margin.left - margin.right - 20;
+    var tokenW = getContainerWidth(container) - margin.left - margin.right;
     if (tokenW < 200) tokenW = 300;
-    var tokenH = 240;
-    var tokenSvg = d3.select(tokenDiv).append("svg")
+    var tokenH = 300;
+    var tokenSvg = d3.select(container).append("svg")
       .attr("width", tokenW + margin.left + margin.right)
       .attr("height", tokenH + margin.top + margin.bottom + 30);
     var tokenG = tokenSvg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -1149,13 +1093,13 @@
     var yToken = d3.scaleLinear().domain([0, yMaxCost]).range([tokenH, 0]);
 
     tokenG.append("g").attr("transform", "translate(0," + tokenH + ")").call(d3.axisBottom(x0t))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
     tokenG.append("g").call(d3.axisLeft(yToken).ticks(5));
 
     var costSeries = [
-      { key: "v5p", label: "TPU V5P ($2.10/hr)", color: "#DD8452", vals: v5pCost },
-      { key: "v4", label: "TPU V4 ($3.22/hr)", color: "#4C72B0", vals: v4Cost },
-      { key: "gpu", label: "GPU A100 ($5.07/hr, est.)", color: "#55A868", vals: gpuCost }
+      { key: "v5p", label: "TPU V5P ($2.10/hr)", color: COLORS.tpu, vals: v5pCost },
+      { key: "v4", label: "TPU V4 ($3.22/hr)", color: "#64748b", vals: v4Cost },
+      { key: "gpu", label: "GPU A100 ($5.07/hr, est.)", color: COLORS.gpu, vals: gpuCost }
     ];
 
     // Render all bars first
@@ -1163,7 +1107,7 @@
       tokenG.selectAll(".bar-" + s.key).data(datasets).enter().append("rect")
         .attr("x", function (d) { return x0t(d) + x1t(s.key); })
         .attr("y", tokenH).attr("width", x1t.bandwidth()).attr("height", 0)
-        .attr("fill", s.color).attr("rx", 2)
+        .attr("fill", s.color).attr("rx", 4)
         .attr("opacity", s.key === "gpu" ? 0.85 : 1)
         .style("cursor", "pointer")
         .on("mouseenter", function (ev, d) {
@@ -1181,13 +1125,13 @@
     var avgV5pCost = d3.mean(v5pCost);
     tokenG.append("line").attr("x1", 0).attr("x2", tokenW)
       .attr("y1", yToken(avgV5pCost)).attr("y2", yToken(avgV5pCost))
-      .attr("stroke", "#c0392b").attr("stroke-width", 2).attr("stroke-dasharray", "6,3");
+      .attr("stroke", COLORS.accent).attr("stroke-width", 2).attr("stroke-dasharray", "6,3");
     tokenG.append("rect")
       .attr("x", tokenW - 128).attr("y", yToken(avgV5pCost) - 18)
-      .attr("width", 124).attr("height", 16).attr("rx", 3)
+      .attr("width", 124).attr("height", 16).attr("rx", 4)
       .attr("fill", "#fff").attr("opacity", 0.9);
     tokenG.append("text").attr("x", tokenW - 4).attr("y", yToken(avgV5pCost) - 6)
-      .attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#c0392b").attr("font-weight", 700)
+      .attr("text-anchor", "end").attr("font-size", 14).attr("fill", COLORS.accent).attr("font-weight", 700)
       .text("V5P avg $" + avgV5pCost.toFixed(2) + "/M");
 
     // All labels last so they render on top of everything
@@ -1214,21 +1158,21 @@
 
     datasets.forEach(function (ds, i) {
       tokenG.append("text").attr("x", x0t(ds) + x0t.bandwidth() / 2).attr("y", tokenH + 58)
-        .attr("text-anchor", "middle").attr("font-size", 8).attr("font-weight", 600)
+        .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
         .attr("fill", CATEGORY_COLORS[categories[i]] || "#64748b").text(categories[i]);
     });
 
     tokenG.append("text").attr("x", -tokenH / 2).attr("y", -38).attr("transform", "rotate(-90)")
-      .attr("text-anchor", "middle").attr("font-size", 11).text("Cost per Million Tokens ($)");
+      .attr("text-anchor", "middle").attr("font-size", 14).text("Cost per Million Tokens ($)");
 
     tokenSvg.append("text").attr("x", (tokenW + margin.left + margin.right) / 2).attr("y", 14)
-      .attr("text-anchor", "middle").attr("font-size", 11).attr("font-weight", 600)
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("font-weight", 600)
       .text("DFlash Cost Efficiency by Benchmark");
 
     var costLegend = tokenSvg.append("g").attr("transform", "translate(" + margin.left + "," + (tokenH + margin.top + margin.bottom + 8) + ")");
     costSeries.forEach(function (s, i) {
-      costLegend.append("rect").attr("x", i * 160).attr("y", 0).attr("width", 10).attr("height", 10).attr("fill", s.color).attr("rx", 2);
-      costLegend.append("text").attr("x", i * 160 + 14).attr("y", 9).attr("font-size", 9).text(s.label);
+      costLegend.append("rect").attr("x", i * 160).attr("y", 0).attr("width", 10).attr("height", 10).attr("fill", s.color).attr("rx", 4);
+      costLegend.append("text").attr("x", i * 160 + 14).attr("y", 9).attr("font-size", 14).text(s.label);
     });
   }
 
@@ -1242,7 +1186,7 @@
     if (rows.length === 0) rows = data;
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 260;
+    var height = 360;
 
     d3.select(container).selectAll("*").remove();
     var svg = d3.select(container).append("svg")
@@ -1251,49 +1195,54 @@
     var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var datasets = rows.map(function (r) { return r.dataset; });
-    var x = d3.scaleBand().domain(datasets).range([0, width]).padding(0.3);
+    var keys = ["tpu", "gpu"];
+    var x0 = d3.scaleBand().domain(datasets).range([0, width]).padding(0.25);
+    var x1 = d3.scaleBand().domain(keys).range([0, x0.bandwidth()]).padding(0.08);
     var yMax = Math.max(
       d3.max(rows, function (r) { return parseFloat(r.tpu_dflash_tps) || 0; }),
       d3.max(rows, function (r) { return parseFloat(r.gpu_dflash_tps) || 0; })
-    ) * 1.1 || 600;
+    ) * 1.15 || 600;
     var y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
-    g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
-    g.append("g").call(d3.axisLeft(y));
+    g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x0))
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
+    g.append("g").call(d3.axisLeft(y)).selectAll("text").attr("font-size", 13);
+    g.selectAll(".domain, .tick line").attr("stroke", "#e2e8f0");
+
+    g.append("text").attr("x", -height / 2).attr("y", -42).attr("transform", "rotate(-90)")
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("fill", "#475569").text("Tokens per Second");
+
+    var barColors = { tpu: COLORS.tpu, gpu: COLORS.gpu };
+    var barFields = { tpu: "tpu_dflash_tps", gpu: "gpu_dflash_tps" };
+    var barLabels = { tpu: "TPU DFlash", gpu: "GPU DFlash" };
 
     container.style.position = "relative";
-    g.selectAll(".bar-tpu").data(rows).enter().append("rect")
-      .attr("class", "bar bar-tpu")
-      .attr("x", function (d) { return x(d.dataset); })
-      .attr("y", height).attr("width", x.bandwidth() / 2 - 4).attr("height", 0).attr("fill", COLORS.tpu)
-      .style("cursor", "pointer")
-      .on("mouseenter", function (ev, d) {
-        showTooltip(container, d.dataset + " · TPU DFlash: " + (parseFloat(d.tpu_dflash_tps) || 0).toFixed(1) + " TPS", ev);
-      })
-      .on("mouseleave", function () { hideTooltip(); })
-      .transition().duration(defaultTransition)
-      .attr("y", function (d) { return y(parseFloat(d.tpu_dflash_tps) || 0); })
-      .attr("height", function (d) { return height - y(parseFloat(d.tpu_dflash_tps) || 0); });
+    keys.forEach(function (key) {
+      g.selectAll(".bar-" + key).data(rows).enter().append("rect")
+        .attr("x", function (d) { return x0(d.dataset) + x1(key); })
+        .attr("y", height).attr("width", x1.bandwidth()).attr("height", 0)
+        .attr("rx", 4).attr("fill", barColors[key])
+        .style("cursor", "pointer")
+        .on("mouseenter", function (ev, d) {
+          showTooltip(container, d.dataset + " · " + barLabels[key] + ": " + (parseFloat(d[barFields[key]]) || 0).toFixed(1) + " TPS", ev);
+        })
+        .on("mouseleave", function () { hideTooltip(); })
+        .transition().duration(defaultTransition)
+        .attr("y", function (d) { return y(parseFloat(d[barFields[key]]) || 0); })
+        .attr("height", function (d) { return height - y(parseFloat(d[barFields[key]]) || 0); });
 
-    g.selectAll(".bar-gpu").data(rows).enter().append("rect")
-      .attr("class", "bar bar-gpu")
-      .attr("x", function (d) { return x(d.dataset) + x.bandwidth() / 2; })
-      .attr("y", height).attr("width", x.bandwidth() / 2 - 4).attr("height", 0).attr("fill", COLORS.gpu)
-      .style("cursor", "pointer")
-      .on("mouseenter", function (ev, d) {
-        showTooltip(container, d.dataset + " · GPU DFlash: " + (parseFloat(d.gpu_dflash_tps) || 0).toFixed(1) + " TPS", ev);
-      })
-      .on("mouseleave", function () { hideTooltip(); })
-      .transition().duration(defaultTransition)
-      .attr("y", function (d) { return y(parseFloat(d.gpu_dflash_tps) || 0); })
-      .attr("height", function (d) { return height - y(parseFloat(d.gpu_dflash_tps) || 0); });
+      g.selectAll(".lbl-" + key).data(rows).enter().append("text")
+        .attr("x", function (d) { return x0(d.dataset) + x1(key) + x1.bandwidth() / 2; })
+        .attr("y", function (d) { return y(parseFloat(d[barFields[key]]) || 0) - 5; })
+        .attr("text-anchor", "middle").attr("font-size", 12).attr("font-weight", 600).attr("fill", "#475569")
+        .text(function (d) { var v = parseFloat(d[barFields[key]]); return v ? v.toFixed(0) : ""; });
+    });
 
-    var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",0)");
-    legend.append("rect").attr("x", 0).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", COLORS.tpu);
-    legend.append("text").attr("x", 16).attr("y", 10).attr("font-size", 11).text("TPU DFlash");
-    legend.append("rect").attr("x", 110).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", COLORS.gpu);
-    legend.append("text").attr("x", 126).attr("y", 10).attr("font-size", 11).text("GPU DFlash");
+    var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",4)");
+    keys.forEach(function (key, i) {
+      legend.append("rect").attr("x", i * 110).attr("y", 0).attr("width", 12).attr("height", 12).attr("rx", 4).attr("fill", barColors[key]);
+      legend.append("text").attr("x", i * 110 + 16).attr("y", 10).attr("font-size", 13).attr("fill", "#475569").text(barLabels[key]);
+    });
   }
   function renderVllmPipelineTps(container, data) {
     if (!container || !data || data.length === 0) return;
@@ -1305,7 +1254,7 @@
     var datasets = baseline.map(function (r) { return r.dataset; });
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 280;
+    var height = 360;
 
     d3.select(container).selectAll("*").remove();
     var svg = d3.select(container).append("svg")
@@ -1314,13 +1263,17 @@
     var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var x0 = d3.scaleBand().domain(datasets).range([0, width]).padding(0.2);
-    var x1 = d3.scaleBand().domain(["baseline", "dflash", "eagle3"]).range([0, x0.bandwidth()]).padding(0.05);
-    var yMax = d3.max(data, function (r) { return parseFloat(r.tps) || 0; }) * 1.1 || 250;
+    var x1 = d3.scaleBand().domain(["baseline", "dflash", "eagle3"]).range([0, x0.bandwidth()]).padding(0.08);
+    var yMax = d3.max(data, function (r) { return parseFloat(r.tps) || 0; }) * 1.15 || 250;
     var y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
     g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x0))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
-    g.append("g").call(d3.axisLeft(y));
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
+    g.append("g").call(d3.axisLeft(y)).selectAll("text").attr("font-size", 13);
+    g.selectAll(".domain, .tick line").attr("stroke", "#e2e8f0");
+
+    g.append("text").attr("x", -height / 2).attr("y", -42).attr("transform", "rotate(-90)")
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("fill", "#475569").text("Tokens per Second");
 
     var methods = [
       { key: "baseline", label: "Baseline", color: COLORS.baseline, src: baseline },
@@ -1330,10 +1283,9 @@
     container.style.position = "relative";
     methods.forEach(function (m) {
       g.selectAll(".bar-" + m.key).data(m.src).enter().append("rect")
-        .attr("class", "bar bar-" + m.key)
         .attr("x", function (d) { return x0(d.dataset) + x1(m.key); })
         .attr("y", height).attr("width", x1.bandwidth()).attr("height", 0)
-        .attr("fill", m.color)
+        .attr("rx", 4).attr("fill", m.color)
         .style("cursor", "pointer")
         .on("mouseenter", function (ev, d) {
           var tps = parseFloat(d.tps) || 0;
@@ -1344,12 +1296,18 @@
         .transition().duration(defaultTransition)
         .attr("y", function (d) { return y(parseFloat(d.tps) || 0); })
         .attr("height", function (d) { return height - y(parseFloat(d.tps) || 0); });
+
+      g.selectAll(".lbl-" + m.key).data(m.src).enter().append("text")
+        .attr("x", function (d) { return x0(d.dataset) + x1(m.key) + x1.bandwidth() / 2; })
+        .attr("y", function (d) { return y(parseFloat(d.tps) || 0) - 5; })
+        .attr("text-anchor", "middle").attr("font-size", 11).attr("font-weight", 600).attr("fill", "#475569")
+        .text(function (d) { var v = parseFloat(d.tps); return v ? v.toFixed(0) : ""; });
     });
 
-    var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",0)");
+    var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",4)");
     methods.forEach(function (m, i) {
-      legend.append("rect").attr("x", i * 100).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", m.color);
-      legend.append("text").attr("x", i * 100 + 16).attr("y", 10).attr("font-size", 11).text(m.label);
+      legend.append("rect").attr("x", i * 110).attr("y", 0).attr("width", 12).attr("height", 12).attr("rx", 4).attr("fill", m.color);
+      legend.append("text").attr("x", i * 110 + 16).attr("y", 10).attr("font-size", 13).attr("fill", "#475569").text(m.label);
     });
   }
 
@@ -1364,8 +1322,7 @@
     if (!container || !data || data.length === 0) return;
 
     var width = getContainerWidth(container) - margin.left - margin.right;
-    var height = 260;
-    var bottomExtra = 20;
+    var height = 360;
 
     var tauMax = d3.max(data, function (r) { return parseFloat(r.tau) || 0; }) * 1.2 || 8;
     var draftsMax = d3.max(data, function (r) { return parseFloat(r.drafts_per_second) || 0; }) * 1.1 || 70;
@@ -1373,7 +1330,7 @@
     d3.select(container).selectAll("*").remove();
     var svg = d3.select(container).append("svg")
       .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom + bottomExtra);
+      .attr("height", height + margin.top + margin.bottom);
     var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var methods = data.map(function (d, i) { return d.method || ("method_" + i); });
@@ -1381,11 +1338,15 @@
     var x1 = d3.scaleLinear().domain([0, draftsMax]).range([0, Math.max(0, x0.bandwidth() - 4)]);
     var y = d3.scaleLinear().domain([0, tauMax]).range([height, 0]);
 
-    var colors = { gpu_dflash_standalone: COLORS.gpu, tpu_dflash_standalone: COLORS.tpu, tpu_dflash_vllm: COLORS.tpu, tpu_eagle3_vllm: COLORS.eagle3 };
+    var colors = { gpu_dflash_standalone: COLORS.gpu, tpu_dflash_standalone: COLORS.tpu, tpu_dflash_vllm: COLORS.dflash, tpu_eagle3_vllm: COLORS.eagle3 };
 
     g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(x0).tickFormat(function (m) { return CHART3_LABELS[m] || m; }))
-      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 10).attr("dx", "-0.4em").attr("dy", "0.2em");
-    g.append("g").call(d3.axisLeft(y));
+      .selectAll("text").attr("transform", "rotate(-40)").style("text-anchor", "end").attr("font-size", 13).attr("dx", "-0.4em").attr("dy", "0.2em");
+    g.append("g").call(d3.axisLeft(y)).selectAll("text").attr("font-size", 13);
+    g.selectAll(".domain, .tick line").attr("stroke", "#e2e8f0");
+
+    g.append("text").attr("x", -height / 2).attr("y", -42).attr("transform", "rotate(-90)")
+      .attr("text-anchor", "middle").attr("font-size", 14).attr("fill", "#475569").text("Tau (avg accepted tokens)");
 
     var idx = methods.indexOf("tpu_dflash_vllm");
     if (idx > 0) {
@@ -1393,7 +1354,7 @@
       g.append("line")
         .attr("x1", sepX).attr("x2", sepX)
         .attr("y1", 0).attr("y2", height)
-        .attr("stroke", "#94a3b8").attr("stroke-width", 1).attr("stroke-dasharray", "4,4").attr("opacity", 0.5);
+        .attr("stroke", "#cbd5e1").attr("stroke-dasharray", "6,4");
     }
 
     container.style.position = "relative";
@@ -1409,23 +1370,28 @@
       var rect = g.append("rect")
         .attr("x", slotCenter).attr("y", y(tau))
         .attr("width", 0).attr("height", barHeight)
+        .attr("rx", 4)
         .attr("fill", colors[method] || COLORS.baseline)
-        .attr("opacity", 0.85)
         .style("cursor", "pointer")
-        .on("mouseover", function (ev) {
+        .on("mouseenter", function (ev) {
           showTooltip(container, "\u03c4=" + tau.toFixed(1) + ", drafts/sec=" + drafts.toFixed(1) + ", TPS=" + accepted.toFixed(0), ev);
         })
-        .on("mouseout", function () { hideTooltip(); });
+        .on("mouseleave", function () { hideTooltip(); });
       rect.transition().duration(defaultTransition)
         .attr("x", barX).attr("width", barWidth);
+
+      g.append("text")
+        .attr("x", slotCenter).attr("y", y(tau) - 5)
+        .attr("text-anchor", "middle").attr("font-size", 12).attr("font-weight", 600).attr("fill", "#475569")
+        .text("\u03c4=" + tau.toFixed(1));
     });
 
     var legendLabels = { gpu_dflash_standalone: "GPU stand.", tpu_dflash_standalone: "TPU stand.", tpu_dflash_vllm: "TPU vLLM", tpu_eagle3_vllm: "Eagle3 vLLM" };
-    var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",0)");
+    var legend = svg.append("g").attr("transform", "translate(" + margin.left + ",4)");
     data.forEach(function (d, i) {
       var method = d.method || ("method_" + i);
-      legend.append("rect").attr("x", i * 78).attr("y", 0).attr("width", 12).attr("height", 12).attr("fill", colors[method] || COLORS.baseline);
-      legend.append("text").attr("x", i * 78 + 16).attr("y", 10).attr("font-size", 10).text(legendLabels[method] || method);
+      legend.append("rect").attr("x", i * 90).attr("y", 0).attr("width", 12).attr("height", 12).attr("rx", 4).attr("fill", colors[method] || COLORS.baseline);
+      legend.append("text").attr("x", i * 90 + 16).attr("y", 10).attr("font-size", 13).attr("fill", "#475569").text(legendLabels[method] || method);
     });
   }
 

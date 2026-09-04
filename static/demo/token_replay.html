@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFlash vs Autoregressive: Real-Time Inference Comparison</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="replay_data.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #ffffff; color: #292524; padding: 0 20px 20px;
+    height: 100vh; display: flex; flex-direction: column;
+  }
+  h1 { font-size: 1.5em; margin-top: 0; margin-bottom: 18px; color: #1c1917; }
+  .container { display: flex; gap: 16px; max-width: 1400px; margin: 0 auto; flex: 1; min-height: 0; width: 100%; }
+  .panel {
+    flex: 1; background: #faf9f7; border-radius: 12px; padding: 16px;
+    border: 1px solid #e7e5e4; position: relative; display: flex; flex-direction: column;
+    overflow: hidden; min-height: 0;
+  }
+  .panel-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #e7e5e4;
+    flex-shrink: 0;
+  }
+  .panel-title { font-size: 1.1em; font-weight: 600; }
+  .panel-title.ar { color: #78716c; }
+  .panel-title.dflash { color: #ea580c; }
+  .stats { display: flex; gap: 16px; }
+  .stat { text-align: right; }
+  .stat-value { font-size: 1.2em; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat-value.ar { color: #78716c; }
+  .stat-value.dflash { color: #ea580c; }
+  .stat-label { font-size: 0.7em; color: #a8a29e; text-transform: uppercase; }
+  .output-area {
+    flex: 1; min-height: 0; overflow-y: auto;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.9em; line-height: 1.6;
+    padding-right: 4px;
+  }
+  .output-area::-webkit-scrollbar { width: 6px; }
+  .output-area::-webkit-scrollbar-track { background: #faf9f7; }
+  .output-area::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 3px; }
+  .output-area h1, .output-area h2, .output-area h3, .output-area h4 {
+    color: #1c1917; margin: 0.6em 0 0.3em;
+  }
+  .output-area h3 { font-size: 1.05em; }
+  .output-area p { margin: 0.4em 0; }
+  .output-area ul, .output-area ol { margin: 0.3em 0; padding-left: 1.5em; }
+  .output-area code {
+    background: #f5f5f4; padding: 1px 5px; border-radius: 4px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.9em;
+  }
+  .output-area pre {
+    background: #f5f5f4; padding: 10px; border-radius: 6px; margin: 0.4em 0;
+    overflow-x: auto;
+  }
+  .output-area pre code { padding: 0; background: none; }
+  .output-area hr { border: none; border-top: 1px solid #e7e5e4; margin: 0.5em 0; }
+  .output-area .katex { font-size: 1em; }
+  .output-area .katex-display { margin: 0.5em 0; overflow-x: auto; }
+  .output-area strong { color: #1c1917; }
+  .streaming-text {
+    margin: 0; padding: 0; background: none; border: none;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.92em; line-height: 1.6; white-space: normal; word-break: break-word;
+    color: #44403c;
+  }
+  .cursor-blink {
+    display: inline-block; width: 2px; height: 1.1em;
+    animation: blink 0.8s infinite; vertical-align: text-bottom; margin-left: 1px;
+  }
+  .cursor-blink.ar-c { background: #78716c; }
+  .cursor-blink.df-c { background: #ea580c; }
+  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+  .progress-bar {
+    height: 4px; background: #e7e5e4; border-radius: 2px;
+    margin-top: 12px; overflow: hidden; flex-shrink: 0;
+  }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.1s linear; width: 0%; }
+  .progress-fill.ar { background: #a8a29e; }
+  .progress-fill.dflash { background: #ea580c; }
+  .controls {
+    display: flex; justify-content: center; align-items: center; flex-wrap: wrap;
+    gap: 10px; margin-top: 12px; max-width: 1400px; margin-left: auto; margin-right: auto;
+    flex-shrink: 0;
+  }
+  button {
+    background: #f5f5f4; color: #44403c; border: 1px solid #d6d3d1;
+    padding: 6px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85em;
+    transition: background 0.15s;
+  }
+  button:hover { background: #e7e5e4; }
+  button.active { background: #ea580c; border-color: #ea580c; color: white; }
+  select {
+    background: #f5f5f4; color: #44403c; border: 1px solid #d6d3d1;
+    padding: 5px 10px; border-radius: 8px; font-size: 0.82em; cursor: pointer;
+  }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 0.75em; font-weight: 600; margin-left: 8px;
+  }
+  .badge.speedup { background: #fef3c7; color: #d97706; }
+  .time-display {
+    font-variant-numeric: tabular-nums; font-size: 0.85em; color: #78716c;
+    min-width: 70px; text-align: center;
+  }
+  .finished-overlay {
+    position: absolute; top: 8px; right: 8px; padding: 4px 10px;
+    background: #fef3c7; color: #d97706; border-radius: 6px;
+    font-size: 0.75em; font-weight: 600; display: none;
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; justify-content:flex-start; align-items:baseline; gap:12px; margin-bottom:18px; max-width:1400px; margin-left:auto; margin-right:auto;">
+  <h1 style="margin-bottom:0;">DFlash Demo on TPU</h1>
+  <span style="font-size:0.85em; color:#a8a29e;">Real-time inference comparison, Qwen3-4B on TPU v5p</span>
+</div>
+
+<div class="container">
+  <div class="panel">
+    <div class="finished-overlay" id="ar-finished">DONE</div>
+    <div class="panel-header">
+      <span class="panel-title ar">Autoregressive (Baseline)</span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value ar" id="ar-tps">0</div>
+          <div class="stat-label">tok/s</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value ar" id="ar-count">0%</div>
+          <div class="stat-label">progress</div>
+        </div>
+      </div>
+    </div>
+    <div class="output-area" id="ar-output"></div>
+    <div class="progress-bar"><div class="progress-fill ar" id="ar-progress"></div></div>
+  </div>
+
+  <div class="panel">
+    <div class="finished-overlay" id="df-finished">DONE</div>
+    <div class="panel-header">
+      <span class="panel-title dflash">DFlash<span class="badge speedup" id="speedup-badge">--</span></span>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value dflash" id="df-tps">0</div>
+          <div class="stat-label">tok/s</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value dflash" id="df-count">0%</div>
+          <div class="stat-label">progress</div>
+        </div>
+      </div>
+    </div>
+    <div class="output-area" id="df-output"></div>
+    <div class="progress-bar"><div class="progress-fill dflash" id="df-progress"></div></div>
+  </div>
+</div>
+
+<div class="controls">
+  <button id="btn-play" onclick="togglePlay()">Play</button>
+  <button id="btn-reset" onclick="resetDemo()">Reset</button>
+  <span class="time-display" id="time-display">0.0s</span>
+  <select id="dataset-select" onchange="changeDataset()"></select>
+</div>
+
+
+<script>
+const DATASETS = ['aime24', 'aime25', 'math500', 'gsm8k', 'humaneval', 'mbpp', 'mt-bench', 'alpaca', 'swe-bench'];
+const DATASET_LABELS = {
+  'aime24': 'AIME 2024', 'aime25': 'AIME 2025', 'math500': 'MATH-500',
+  'gsm8k': 'GSM8K', 'humaneval': 'HumanEval', 'mbpp': 'MBPP',
+  'mt-bench': 'MT-Bench', 'alpaca': 'Alpaca', 'swe-bench': 'SWE-Bench'
+};
+
+let replayData = {};
+let currentDataset = 'aime24';
+let currentSampleIdx = 0;
+let speed = 1;
+let playing = false;
+let animFrameId = null;
+let startTime = 0;
+let pausedElapsed = 0;
+
+// Current sample state
+let sampleData = null;
+let blText = '', dfText = '';
+let blTotalTime = 0, dfTotalTime = 0; // total generation time in ms
+let blCharsRevealed = 0, dfCharsRevealed = 0;
+let blDone = false, dfDone = false;
+
+function renderStreaming(container, fullText, charCount, cursorClass) {
+  const partial = fullText.slice(0, charCount);
+  const escaped = partial.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  container.innerHTML = '<div class="streaming-text">' + escaped +
+    `<span class="cursor-blink ${cursorClass}"></span></div>`;
+  container.scrollTop = container.scrollHeight;
+}
+
+function renderFinal(container, fullText) {
+  const escaped = fullText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  container.innerHTML = '<div class="streaming-text">' + escaped + '</div>';
+  container.scrollTop = container.scrollHeight;
+}
+
+function populateDatasetSelect() {
+  const sel = document.getElementById('dataset-select');
+  sel.innerHTML = '';
+  for (const ds of DATASETS) {
+    const opt = document.createElement('option');
+    opt.value = ds;
+    opt.textContent = DATASET_LABELS[ds] || ds;
+    sel.appendChild(opt);
+  }
+  sel.value = currentDataset;
+}
+
+function initSample() {
+  pause();
+  const data = replayData[currentDataset];
+  if (!data || !data.samples.length) return;
+
+  const maxTok = data.config && data.config.max_new_tokens || 2048;
+  for (let i = 0; i < data.samples.length; i++) {
+    const s = data.samples[i];
+    if (s.baseline.num_output_tokens < maxTok && s.dflash.num_output_tokens < maxTok) {
+      currentSampleIdx = i;
+      break;
+    }
+  }
+
+  sampleData = data.samples[currentSampleIdx];
+  const bl = sampleData.baseline;
+  const df = sampleData.dflash;
+
+  blText = (bl.text || '').replace(/\n+/g, ' ').replace(/ {2,}/g, ' ').trim();
+  dfText = (df.text || '').replace(/\n+/g, ' ').replace(/ {2,}/g, ' ').trim();
+  blTotalTime = bl.total_time_ms;
+  dfTotalTime = df.total_time_ms;
+  blCharsRevealed = 0;
+  dfCharsRevealed = 0;
+  blDone = false;
+  dfDone = false;
+  pausedElapsed = 0;
+
+  // Clear outputs
+  document.getElementById('ar-output').innerHTML = '<span class="cursor-blink ar-c"></span>';
+  document.getElementById('df-output').innerHTML = '<span class="cursor-blink df-c"></span>';
+
+  // Update UI
+  document.getElementById('ar-tps').textContent = Math.round(bl.tps);
+  document.getElementById('df-tps').textContent = Math.round(df.tps);
+  document.getElementById('ar-count').textContent = '0%';
+  document.getElementById('df-count').textContent = '0%';
+  document.getElementById('ar-progress').style.width = '0%';
+  document.getElementById('df-progress').style.width = '0%';
+  document.getElementById('ar-finished').style.display = 'none';
+  document.getElementById('df-finished').style.display = 'none';
+  document.getElementById('speedup-badge').textContent =
+    sampleData.speedup.toFixed(1) + 'x faster';
+  document.getElementById('time-display').textContent = '0.0s';
+  document.getElementById('btn-play').textContent = 'Play';
+}
+
+function togglePlay() {
+  if (playing) { pause(); } else { play(); }
+}
+
+function play() {
+  playing = true;
+  document.getElementById('btn-play').textContent = 'Pause';
+  document.getElementById('btn-play').classList.add('active');
+  startTime = performance.now() - (pausedElapsed / speed);
+  animate();
+}
+
+function pause() {
+  playing = false;
+  document.getElementById('btn-play').textContent = 'Play';
+  document.getElementById('btn-play').classList.remove('active');
+  if (animFrameId) cancelAnimationFrame(animFrameId);
+}
+
+function resetDemo() { initSample(); }
+
+function changeDataset() {
+  currentDataset = document.getElementById('dataset-select').value;
+  currentSampleIdx = 0;
+  loadDataset(currentDataset).then(() => {
+    initSample();
+  });
+}
+
+// Throttle rendering to avoid excessive DOM updates
+let lastBlRender = 0, lastDfRender = 0;
+
+function animate() {
+  if (!playing) return;
+  const elapsed = (performance.now() - startTime) * speed;
+  pausedElapsed = elapsed;
+
+  // --- Baseline: linear character reveal based on total time ---
+  const blProgress = Math.min(elapsed / blTotalTime, 1);
+  const blCharTarget = Math.floor(blProgress * blText.length);
+  if (blCharTarget > blCharsRevealed) {
+    blCharsRevealed = blCharTarget;
+    const now = performance.now();
+    if (now - lastBlRender > 50) {
+      renderStreaming(document.getElementById('ar-output'), blText, blCharsRevealed, 'ar-c');
+      lastBlRender = now;
+    }
+  }
+
+  // --- DFlash: character reveal proportional to step progress ---
+  const dfProgress = Math.min(elapsed / dfTotalTime, 1);
+  const dfCharTarget = Math.floor(dfProgress * dfText.length);
+  if (dfCharTarget > dfCharsRevealed) {
+    dfCharsRevealed = dfCharTarget;
+    const now = performance.now();
+    if (now - lastDfRender > 50) {
+      renderStreaming(document.getElementById('df-output'), dfText, dfCharsRevealed, 'df-c');
+      lastDfRender = now;
+    }
+  }
+
+  // --- Update stats ---
+  const elapsedSec = elapsed / 1000;
+  document.getElementById('time-display').textContent = elapsedSec.toFixed(1) + 's';
+  document.getElementById('ar-count').textContent = Math.round(blProgress * 100) + '%';
+  document.getElementById('df-count').textContent = Math.round(dfProgress * 100) + '%';
+  document.getElementById('ar-progress').style.width = (blProgress * 100) + '%';
+  document.getElementById('df-progress').style.width = (dfProgress * 100) + '%';
+
+  // --- Finished indicators ---
+  if (blProgress >= 1 && !blDone) {
+    blDone = true;
+    document.getElementById('ar-finished').style.display = 'block';
+    renderFinal(document.getElementById('ar-output'), blText);
+  }
+  if (dfProgress >= 1 && !dfDone) {
+    dfDone = true;
+    document.getElementById('df-finished').style.display = 'block';
+    renderFinal(document.getElementById('df-output'), dfText);
+  }
+
+  if (blDone && dfDone) {
+    pause();
+    document.getElementById('btn-play').textContent = 'Done';
+    return;
+  }
+
+  animFrameId = requestAnimationFrame(animate);
+}
+
+async function loadDataset(name) {
+  if (replayData[name]) return;
+  // Use pre-loaded data from replay_data.js (works with file://)
+  if (window.REPLAY_DATA && window.REPLAY_DATA[name]) {
+    replayData[name] = window.REPLAY_DATA[name];
+    return;
+  }
+  // Fallback to fetch (works with HTTP server)
+  try {
+    const resp = await fetch(`../../data/replay_${name}.json`);
+    replayData[name] = await resp.json();
+  } catch (e) {
+    console.error(`Failed to load ${name}:`, e);
+  }
+}
+
+async function init() {
+  populateDatasetSelect();
+  await loadDataset(currentDataset);
+  initSample();
+}
+
+init();
+</script>
+</body>
+</html>

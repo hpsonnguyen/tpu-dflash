@@ -1,527 +1,506 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
-    <title>DFlash on TPU - Speculative Decoding at Scale</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="container">
-        <div class="brand">
-          <div class="brand-title">DFlash on TPU</div>
-          <div class="brand-subtitle">Diffusion-based speculative decoding ported to TPU</div>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="DFlash on TPU: Porting and evaluating diffusion-based speculative decoding for accelerated LLM inference on Google TPU.">
+  <meta name="keywords" content="DFlash, TPU, Speculative Decoding, LLM Inference, vLLM, JAX">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DFlash on TPU: Speculative Decoding at Scale</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="./static/js/dataLoader.js?v=5"></script>
+  <script src="./static/js/charts.js?v=5"></script>
+  <script src="./static/js/replay.js?v=5"></script>
+  <script src="./static/js/scrollTrigger.js"></script>
+  <script src="./static/js/app.js"></script>
+</head>
+<body>
+
+<nav id="site-nav">
+  <div class="nav-title">Table of Contents</div>
+  <a href="#demo">Demo</a>
+  <a href="#abstract">Abstract</a>
+  <a href="#methods">Methods</a>
+  <a href="#results">Results</a>
+  <a href="#conclusion">Conclusion</a>
+  <a href="#BibTeX">BibTeX</a>
+</nav>
+<style>
+  #site-nav {
+    position: fixed; top: 80px; right: 20px; z-index: 1000;
+    background: #fff; border-radius: 10px; padding: 14px 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    display: flex; flex-direction: column; gap: 3px;
+    font-family: 'Google Sans', sans-serif; font-size: 0.8rem;
+  }
+  #site-nav .nav-title {
+    font-weight: 700; font-size: 0.85rem; color: #222; margin-bottom: 4px;
+  }
+  #site-nav a {
+    color: #555; text-decoration: none; transition: color .15s; padding: 2px 0;
+  }
+  #site-nav a:hover { color: #111; }
+</style>
+
+<section class="hero">
+  <div class="hero-body" style="padding-bottom: 0.5rem;">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Porting DFlash to TPU: Accelerating LLM Inference with Speculative Decoding</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="#">Aaron Feng</a><sup>*</sup>,</span>
+            <span class="author-block"><a href="#">Zhongyan Luo</a><sup>*</sup>,</span>
+            <span class="author-block"><a href="#">Son Nguyen</a><sup>*</sup>,</span>
+            <span class="author-block"><a href="#">Andy Huang</a><sup>*</sup>,</span>
+            <span class="author-block"><a href="#">Yiming Zhao</a><sup>&dagger;</sup></span>
+            <span class="author-block"><a href="https://haozhang.ai/">Hao Zhang</a><sup>&dagger;</sup>,</span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">UC San Diego</span>
+          </div>
+
+          <div class="is-size-6 publication-authors" style="margin-top: 0.3rem; color: #666;">
+            <span class="author-block"><sup>*</sup>Equal contribution&ensp;&ensp;<sup>&dagger;</sup>Advisors</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://github.com/hpsonnguyen/tpu-dflash/blob/main/project_report.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Report</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/aaronzhfeng/tpu-spec-decode/blob/main/deliverables/poster.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-image"></i>
+                  </span>
+                  <span>Poster</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/aaronzhfeng/tpu-spec-decode"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#results"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-chart-bar"></i>
+                  </span>
+                  <span>Results</span>
+                </a>
+              </span>
+            </div>
+          </div>
         </div>
-        <nav class="nav">
-          <a href="#overview">Overview</a>
-          <a href="#team">Team</a>
-          <a href="#problem">Problem</a>
-          <a href="#background">Background</a>
-          <a href="#methods">Methods</a>
-          <a href="#results">Results</a>
-          <a href="#demo">Demo</a>
-          <a href="#conclusion">Conclusion</a>
-        </nav>
       </div>
-    </header>
+    </div>
+  </div>
+</section>
 
-    <main>
-      <section id="overview" class="hero">
-        <div class="container">
-          <div class="hero-text">
-            <h1>Toward Accelerated LLM Inference:
-              Porting and Evaluating Diffusion-Based
-              Speculative Decoding on TPU</h1>
-            <p>
-              Autoregressive decoding is inherently sequential: generating <em>n</em> tokens requires <em>n</em> target-model forward passes.
-              We port DFlash&mdash;a diffusion-based speculative decoding method that drafts a whole 16-token block in a single parallel forward pass&mdash;from GPU/PyTorch to TPU/JAX within the
-              <span style="white-space:nowrap;">vLLM</span> <span style="white-space:nowrap;">TPU</span> inference stack (<code>tpu-inference</code>).
-              Benchmarked on Qwen3-4B across 9 datasets (math, code, chat) on TPU V5P.
-            </p>
-            <div class="hero-links">
-              <a class="button" href="https://github.com/aaronzhfeng/tpu-spec-decode">Code</a>
-              <a class="button" href="https://github.com/aaronzhfeng/tpu-inference">TPU Inference Fork</a>
-              <a class="button" href="https://github.com/hpsonnguyen/tpu-dflash/blob/main/project_report.pdf">Report</a>
-              <a class="button" href="#results">View Results</a>
-            </div>
-          </div>
-          <div class="hero-card">
-            <div class="card-title">Key Outcomes</div>
-            <div class="metric">
-              <div class="metric-value">2.31&times;</div>
-              <div class="metric-label">vLLM pipeline speedup (DFlash vs baseline)</div>
-            </div>
-            <div class="metric">
-              <div class="metric-value">3.01&times;</div>
-              <div class="metric-label">Standalone TPU V5P speedup (DFlash vs baseline, 9 benchmarks)</div>
-            </div>
-            <div class="metric">
-              <div class="metric-value">&tau; = 5.42</div>
-              <div class="metric-label">Avg. accepted tokens per draft (standalone TPU V5P, 9 benchmarks)</div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section id="team" class="section team-section team-section-compact">
-        <div class="container">
-          <div class="team-core">
-            <h3 class="team-subheading">Team Members</h3>
-            <div class="team-grid">
-              <div class="team-card">
-                <div class="team-initial">A</div>
-                <div class="team-name">Aaron Feng</div>
-              </div>
-              <div class="team-card">
-                <div class="team-initial">Z</div>
-                <div class="team-name">Zhongyan Luo</div>
-              </div>
-              <div class="team-card">
-                <div class="team-initial">S</div>
-                <div class="team-name">Son Nguyen</div>
-              </div>
-              <div class="team-card">
-                <div class="team-initial">A</div>
-                <div class="team-name">Andy Huang</div>
-              </div>
-            </div>
-          </div>
-          <div class="team-advisors">
-            <h3 class="team-subheading">Advisors</h3>
-            <div class="team-grid team-grid-advisors">
-              <div class="team-card team-card-mentor">
-                <div class="team-initial">H</div>
-                <div class="team-name">Hao Zhang</div>
-                <div class="team-role">Mentor</div>
-              </div>
-              <div class="team-card team-card-ta">
-                <div class="team-initial">Y</div>
-                <div class="team-name">Yiming Zhao</div>
-                <div class="team-role">TA</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<section class="section" id="demo" style="padding-top: 0.5rem; padding-bottom: 1.5rem;">
+  <div class="container" style="max-width: 1200px;">
+    <iframe src="./static/demo/token_replay.html"
+            style="width: 100%; height: 540px; border: none; border-radius: 12px;"
+            loading="lazy" title="Inference Demo"></iframe>
+  </div>
+</section>
 
-      <section id="problem" class="section">
-        <div class="container">
-          <h2>Problem and Motivation</h2>
-          <h3>The Decoding Bottleneck</h3>
+<section class="section" id="abstract">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
           <p>
-            LLM inference consists of two stages with very different computational profiles.
-            <strong>Prefilling</strong> processes the entire input prompt in a single forward pass&mdash;all tokens are known in advance, so the computation is fully parallelizable across the prompt length, similar to training.
-            <strong>Decoding</strong>, however, is inherently sequential: each new token depends on the one generated before it.
-            Latency grows linearly with output length, making decoding the dominant bottleneck for long-form tasks like chain-of-thought reasoning (500&ndash;2000 tokens) and code generation (200&ndash;1000 tokens).
-          </p>
-          <h3>Speculative Decoding</h3>
-          <p>
-            Since full parallelization is fundamentally incompatible with autoregressive decoding, acceleration techniques must relax the sequential dependency in controlled ways.
-            <strong>Speculative decoding</strong> does this by having a lightweight draft model propose a sequence of candidate tokens, then having the full target model verify them all in a single batched forward pass.
-            If the draft is good, multiple tokens are accepted per verification step, reducing the number of expensive target-model calls.
-            In the worst case (first token rejected), it degenerates to standard decoding with negligible overhead.
-          </p>
-          <h3>Our Contribution</h3>
-          <p>
-            We port <strong>DFlash</strong>&mdash;a diffusion-based speculative decoding method&mdash;from GPU/PyTorch to TPU/JAX inside the <code>tpu-inference</code> runtime.
-            We evaluate performance in both standalone loops (isolating model compute) and the full vLLM serving pipeline (including scheduling, KV cache management, and rejection sampling).
-            We compare against Eagle3 (an autoregressive drafter) and verify that output quality is preserved.
+            Autoregressive LLM decoding is inherently sequential: each token depends on the last, so generating \(n\) tokens requires \(n\) forward passes through the full model.
+            This makes decoding the dominant latency bottleneck for long-form tasks such as chain-of-thought reasoning and code generation.
+            <strong>Speculative decoding</strong> alleviates this by having a lightweight draft model propose multiple candidate tokens, which the full target model then verifies in a single batched pass, accepting correct tokens and falling back to standard decoding only at the first rejection.
           </p>
           <p>
-            TPUs are uniquely suited to this approach: their matrix-unit (MXU) architecture favors large, dense, data-parallel operations&mdash;exactly the pattern DFlash uses when predicting a 16-token block in one pass.
-            Critically, TPU verification cost is <strong>flat from K=16 to K=128</strong> (0.97&times;), while GPU verification scales to 2.3&times; at longer contexts.
-            This means DFlash + TPU is the only combination where <em>both</em> draft and verification costs remain constant as block size grows, opening the door to much wider draft blocks than are practical on GPU.
+            <span class="dnerf">DFlash</span> advances this paradigm by replacing the conventional autoregressive drafter with a diffusion-based block drafter.
+            While methods like Eagle3 still generate draft tokens one at a time (\(\mathcal{O}(k)\) passes for \(k\) tokens), DFlash uses a compact 4-layer transformer with <strong>non-causal attention</strong> to predict an entire 16-token block in a single parallel forward pass, reducing draft cost to \(\mathcal{O}(1)\).
+            It reuses the target model&rsquo;s embedding layer and LM head, requiring no separate vocabulary and enabling training on just 289K samples.
+          </p>
+          <p>
+            We port DFlash from GPU to TPU within vLLM&rsquo;s <code>tpu-inference</code> stack, addressing challenges including dual KV cache management, non-causal attention kernel routing, and a critical sequence-length alignment bug whose fix alone nearly doubled performance.
+            Evaluated on Qwen3-4B across 9 benchmarks spanning math, code, and chat tasks on TPU V5P, our port achieves \(\mathbf{3.01\times}\) standalone speedup and \(\mathbf{2.31\times}\) in the full serving pipeline, reaching \(\mathbf{94.9\%}\) of published GPU draft quality.
           </p>
         </div>
-      </section>
-
-      <section id="background" class="section">
-        <div class="container">
-          <h2>Background</h2>
-          <h3>Speculative Decoding</h3>
-          <p>
-            Speculative decoding introduces parallelism into the decoding stage by using a fast, cheap <em>draft model</em> to propose a sequence of <em>n</em> candidate tokens, then having the full <em>target model</em> verify all candidates in a single batched forward pass.
-            At each position, the draft token is checked against the target model&rsquo;s distribution using a rejection-sampling rule.
-            Verification proceeds from position 1 onward: the first rejected token causes all remaining drafts to be discarded, and the target model samples from its own distribution at that position.
-          </p>
-          <p>
-            In the worst case (first draft token rejected), speculative decoding degenerates to standard decoding with negligible additional cost.
-            In typical cases, multiple tokens are accepted per target-model call, reducing average latency while preserving the exact output distribution.
-            The key metric is <strong>&tau;</strong> (average acceptance length)&mdash;how many draft tokens are accepted per verification step. Higher &tau; means more tokens generated per expensive target-model forward pass.
-          </p>
-          <h3>Draft Model Approaches</h3>
-          <p>Draft models span a wide range of speed&ndash;quality tradeoffs:</p>
-          <ul>
-            <li><strong>N-gram drafting:</strong> non-neural and extremely fast, but provides a poor approximation of the target distribution, yielding low acceptance rates and limited speedup.</li>
-            <li><strong>Eagle3:</strong> a small one-layer transformer that reuses target-model context (hidden states and last-token embeddings). Produces much better drafts but remains <em>autoregressive</em>&mdash;each draft token depends on the previous one, requiring <em>O(k)</em> sequential forward passes for <em>k</em> draft tokens. This sequential proposal cost grows linearly with block size.</li>
-            <li><strong>Large diffusion models:</strong> explored as drafters, but their memory footprint outweighs latency benefits. Small diffusion models tend to produce drafts that poorly align with the target distribution.</li>
-          </ul>
-          <h3>DFlash Architecture</h3>
-          <p>
-            <strong>DFlash</strong> replaces sequential drafting with a diffusion-style <em>block drafter</em> that predicts an entire fixed-size token block (16 tokens) in a single forward pass using <strong>non-causal attention</strong>.
-            The draft model is not a full language model&mdash;it has no embedding layer or LM head of its own.
-            It consists of a small transformer stack (4 decoder layers) with a custom attention pattern, and it reuses the <em>target model&rsquo;s</em> embedding and LM head for both input and output.
-          </p>
-          <p>
-            <strong>Input:</strong> The block of positions to be predicted is represented as token IDs (including mask placeholders for unknown future positions), passed through the target model&rsquo;s embedding layer.
-            Additionally, the draft receives <em>target hidden states</em> from a subset of the target model&rsquo;s layers (layers [1, 9, 17, 25, 33] for Qwen3-4B), which are concatenated and projected via an FC layer + RMSNorm.
-            This projected vector conditions the draft on what the target &ldquo;thinks&rdquo; at the current position.
-          </p>
-          <p>
-            <strong>Attention:</strong> Each DFlash decoder layer uses a custom attention mechanism where queries come from the block, while keys and values come from both the target context and the block.
-            Crucially, attention is <strong>non-causal</strong> within the block: all positions attend to each other bidirectionally.
-            At K=16, each position sees 15 neighbors; at K=128, each position would see 127 neighbors&mdash;providing fundamentally richer conditioning than autoregressive drafters, which can only see past positions.
-          </p>
-          <p>
-            <strong>Output:</strong> The block of hidden states produced by the draft is fed into the target model&rsquo;s LM head to obtain logits.
-            The draft model never has its own vocabulary projection&mdash;it always uses the target&rsquo;s, ensuring draft proposals and target verification share the same vocabulary space.
-            This design reduces draft cost from <em>O(k)</em> to <em>O(1)</em> while remaining expressive enough to achieve high acceptance rates.
-            Trained on just 289K samples, DFlash outperforms Eagle3 (trained on 1.4M samples) in inference acceleration.
-          </p>
-        </div>
-      </section>
-
-      <section id="methods" class="section">
-        <div class="container">
-          <h2>Methods: GPU &rarr; TPU Migration</h2>
-          <div class="methods-grid">
-            <div class="methods-figure">
-              <img src="assets/methods_diagram.svg" alt="DFlash GPU to TPU migration diagram" style="max-width:100%;height:auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" />
-              <div style="display:none" class="svg-fallback">
-                <svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520"><rect width="900" height="520" fill="#fff"/><text x="40" y="40" font-family="Arial" font-size="22" font-weight="700" fill="#0f172a">DFlash GPU &rarr; TPU Migration</text><rect x="40" y="70" width="360" height="180" rx="12" fill="#f1f5f9" stroke="#cbd5f5"/><text x="60" y="105" font-family="Arial" font-size="16" font-weight="700">GPU (PyTorch)</text><text x="60" y="135" font-size="13" fill="#334155">&#x2022; Draft model: diffusion block (b16)</text><text x="60" y="160" font-size="13" fill="#334155">&#x2022; Target verification in PyTorch</text><text x="60" y="185" font-size="13" fill="#334155">&#x2022; DynamicCache (concat KV)</text><text x="60" y="210" font-size="13" fill="#334155">&#x2022; GPU FlashAttention</text><rect x="500" y="70" width="360" height="180" rx="12" fill="#eef2ff" stroke="#c7d2fe"/><text x="520" y="105" font-family="Arial" font-size="16" font-weight="700">TPU (JAX / tpu-inference)</text><text x="520" y="135" font-size="13" fill="#334155">&#x2022; Draft model: diffusion block (b16)</text><text x="520" y="160" font-size="13" fill="#334155">&#x2022; Target verification in JAX</text><text x="520" y="185" font-size="13" fill="#334155">&#x2022; Dual KV cache (paged + static)</text><text x="520" y="210" font-size="13" fill="#334155">&#x2022; TPU flash_attention (non-causal)</text><line x1="400" y1="160" x2="500" y2="160" stroke="#64748b" stroke-width="2"/><rect x="40" y="280" width="820" height="200" rx="14" fill="#f8fafc" stroke="#e2e8f0"/><text x="60" y="315" font-size="16" font-weight="700">Key Porting Steps</text><rect x="60" y="335" width="240" height="110" rx="10" fill="#fff" stroke="#e2e8f0"/><text x="78" y="365" font-size="13" font-weight="700">Dual KV Cache</text><text x="78" y="388" font-size="12" fill="#475569">Target uses paged KV; draft uses static JAX KV.</text><rect x="330" y="335" width="240" height="110" rx="10" fill="#fff" stroke="#e2e8f0"/><text x="348" y="365" font-size="13" font-weight="700">Attention Kernel Swap</text><text x="348" y="388" font-size="12" fill="#475569">Use TPU flash_attention with non-causal block.</text><rect x="600" y="335" width="240" height="110" rx="10" fill="#fff" stroke="#e2e8f0"/><text x="618" y="365" font-size="13" font-weight="700">Seq-len Alignment Fix</text><text x="618" y="388" font-size="12" fill="#475569">Track accepted length to prevent state drift.</text></svg>
-              </div>
-            </div>
-            <div class="methods-text">
-              <h3>Key Engineering Steps</h3>
-              <ul>
-                <li>
-                  <strong>Dual KV cache architecture:</strong> The GPU reference uses <code>DynamicCache</code> with KV concatenation. On TPU, paged KV (vLLM PagedAttention) serves the target model, while the draft model uses a separate static JAX KV cache with <code>dynamic_update_slice</code>, matching the GPU architecture&rsquo;s per-layer static caches.
-                  The KV cache manager was extended to allocate <code>draft_layer.{i}</code> specs for all draft layers instead of hardcoding a single layer (as was done for Eagle3).
-                </li>
-                <li>
-                  <strong>Non-causal attention kernel:</strong> DFlash&rsquo;s draft attention is explicitly <code>is_causal=False</code>&mdash;all block positions attend to each other bidirectionally.
-                  This was the main parity risk: the existing TPU decode path was optimized around causal ragged paged attention.
-                  We route draft layers through TPU <code>flash_attention</code> with <code>causal=False</code>, while keeping the target model on ragged paged causal attention.
-                  The reference uses token-axis K/V concatenation (not additive fusion), which we match exactly.
-                </li>
-                <li>
-                  <strong>Sequence-length inflation fix:</strong> We discovered that <code>attn_metadata.seq_lens</code> included unverified draft tokens (~15 phantom tokens per step), corrupting the proposer&rsquo;s context buffer, KV cache positions, and RoPE embeddings.
-                  Each decode step inflated the sequence length by the full draft block size rather than the accepted count, causing positional encoding drift and stale context.
-                  Fixing this single bug by using <code>num_tokens_no_spec</code> (the actual accepted count) nearly doubled performance: &tau; jumped from 2.49 to 4.48, speedup from 1.30&times; to 2.31&times;.
-                </li>
-                <li>
-                  <strong>Target hidden-state extraction:</strong> An auxiliary capture path was added to the Qwen3 target model.
-                  Hidden states from layers [1, 9, 17, 25, 33] are concatenated along the feature dimension, projected via an FC layer + RMSNorm, and passed to the draft model as contextual conditioning.
-                  The layer selection follows the DFlash checkpoint configuration and is deterministic.
-                </li>
-                <li>
-                  <strong>Method registration &amp; dispatch:</strong> DFlash was integrated using the same pattern as Eagle3: a new <code>&quot;dflash&quot;</code> method branch in <code>tpu_runner.py</code>, a <code>DFlashProposer</code> class under <code>spec_decode/jax/</code>, and dispatch routing in <code>speculative_decoding_manager.py</code>.
-                  Compilation prewarm support and precompile helpers were extended for the <code>dflash</code> path.
-                </li>
-              </ul>
-              <p>
-                The implementation preserves the full DFlash contract: extract target hidden-state features, run a lightweight 4-layer block drafter with non-causal attention, reuse the target&rsquo;s embedding layer and LM head for logits, then verify the full 16-token draft block in one target forward pass.
-                It adds zero new vLLM dependencies&mdash;DFlash runs entirely within the <code>tpu-inference</code> runtime.
-                Rejection and acceptance are handled centrally by the existing rejection sampler; the proposer only returns draft token IDs for active requests.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="results" class="section">
-        <div class="container">
-          <h2>Results</h2>
-          <p>
-            We benchmark Qwen3-4B (target) + DFlash-b16 (draft) across 9 datasets spanning math, code, and chat tasks on TPU V5P (4 chips).
-            The standalone loop achieves an overall <strong>3.01&times;</strong> speedup with &tau;&nbsp;=&nbsp;5.42, reaching <strong>3.72&times;</strong> on math benchmarks (&tau;&nbsp;=&nbsp;6.71).
-            Math tasks see the highest acceptance because reasoning chains are more predictable for the drafter; chat tasks (1.96&times;) show lower &tau; due to higher entropy.
-            On math benchmarks where GPU comparison data is available, TPU achieves <strong>94.9%</strong> of GPU paper &tau;, and <em>exceeds</em> GPU on Math500 (&tau;&nbsp;=&nbsp;8.80 vs 7.84).
-          </p>
-          <p>
-            In the full vLLM serving pipeline (with scheduling, batch management, and rejection sampling), DFlash achieves <strong>2.31&times;</strong> speedup at &tau;&nbsp;=&nbsp;4.48.
-            The gap between standalone and pipeline &tau; (6.67 vs 4.48) comes from vLLM orchestration overhead, not model compute.
-            Output mismatches (bf16 floating-point divergence in batch-16 verify vs single-token baseline) do not indicate correctness loss.
-          </p>
-
-          <div id="summary-dashboard-chart" class="chart-container dashboard-container"></div>
-
-          <h3>Additional Findings</h3>
-
-          <div class="chart-carousel" id="chart-carousel">
-            <div class="carousel-slides">
-
-              <div class="carousel-slide active" data-slide="0">
-                <div class="panel carousel-panel">
-                  <h4>vLLM Pipeline TPS</h4>
-                  <div id="vllm-pipeline-tps-chart" class="chart-container chart-container-large"></div>
-                  <p class="chart-description">
-                    End-to-end tokens/sec throughput in the full vLLM serving pipeline comparing baseline, DFlash, and Eagle3 speculative methods.
-                    <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart1">view more&hellip;</button>
-                  </p>
-                  <div id="details-chart1" class="chart-details-content chart-details-collapsed">
-                    <p>This measures <strong>real serving throughput</strong>, not just raw decoding speed. The vLLM pipeline adds request scheduling, paged KV cache management, batch formation, and the rejection-sampling verification loop on top of the model forward pass.</p>
-                    <p>DFlash achieves <strong>2.31&times;</strong> speedup over baseline by drafting all 16 tokens in a single diffusion forward pass. Eagle3 (autoregressive drafter) is included as a reference&mdash;its sequential O(k) drafting makes it slower per proposal despite competitive acceptance rates.</p>
-                    <p>The gap between standalone speedup (3.01&times;) and pipeline speedup (2.31&times;) quantifies vLLM orchestration overhead. Profiling shows verification alone is 59% of step time, with the two LM-head matmuls at ~30%. Reducing these bottlenecks (see Future Work) could close the standalone&ndash;pipeline gap significantly.</p>
-                    <p>Baseline TPS is already high on TPU V4 (~160 tok/s), meaning the relative speedup understates the absolute throughput gains compared to GPU baselines.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="carousel-slide" data-slide="1">
-                <div class="panel carousel-panel">
-                  <h4>Standalone TPU vs GPU DFlash</h4>
-                  <div id="standalone-tpu-vs-gpu-chart" class="chart-container chart-container-large"></div>
-                  <p class="chart-description">
-                    Side-by-side DFlash throughput (tok/s) on TPU V5P vs GPU A100 paper numbers for the four math benchmarks with published GPU data.
-                    <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart2">view more&hellip;</button>
-                  </p>
-                  <div id="details-chart2" class="chart-details-content chart-details-collapsed">
-                    <p>Only math-reasoning benchmarks (gsm8k, math500, aime24, aime25) are shown because these are the only datasets for which the original DFlash paper reports GPU A100 throughput. Code and chat benchmarks lack published GPU baselines and are excluded.</p>
-                    <p>Despite a full framework migration (PyTorch &rarr; JAX) and entirely different hardware (NVIDIA A100 &rarr; Google TPU V5P), TPU throughput consistently matches or exceeds GPU. This confirms that DFlash&rsquo;s block-parallel drafting pattern&mdash;a single dense matrix multiply predicting 16 tokens&mdash;maps naturally to TPU&rsquo;s systolic MXU architecture.</p>
-                    <p>The TPU advantage is partly structural: TPU&rsquo;s paged attention kernel (RPA v3) absorbs attention compute within the weight-loading window, so verification cost stays flat as block size grows. On GPU, attention cost scales to 2.3&times; at K=128/L=1024, eroding the speedup DFlash provides.</p>
-                    <p>If an &ldquo;AVERAGE&rdquo; bar is shown, it averages only these four math benchmarks&mdash;not the full 9-dataset suite.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="carousel-slide" data-slide="2">
-                <div class="panel carousel-panel">
-                  <h4>Acceptance Volume (&tau; &times; drafts/sec)</h4>
-                  <div id="acceptance-analysis-chart" class="chart-container chart-container-large"></div>
-                  <p class="chart-description">
-                    Effective throughput decomposed into two factors: bar height = &tau; (accepted tokens/draft), bar width = drafts/sec, bar area = total accepted tokens/sec.
-                    <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart3">view more&hellip;</button>
-                  </p>
-                  <div id="details-chart3" class="chart-details-content chart-details-collapsed">
-                    <p>Speculative decoding throughput depends on two independent factors: (1) how many tokens the target model accepts per draft block (&tau;), and (2) how many draft blocks the system proposes per second (drafts/sec). This chart visualizes both simultaneously&mdash;the <em>area</em> of each bar is their product, representing real accepted tokens per second.</p>
-                    <p><strong>Math benchmarks</strong> have the tallest bars (&tau; up to 8.80 on Math500) because structured reasoning chains are highly predictable for the diffusion drafter. <strong>Chat benchmarks</strong> have shorter bars (lower &tau;) but can partially compensate with wider bars (higher drafts/sec) because their shorter average contexts reduce per-step compute.</p>
-                    <p>This decomposition reveals an important insight: a dataset could have mediocre &tau; but still achieve high throughput if the draft-verify cycle is fast enough. Conversely, high &tau; alone doesn&rsquo;t guarantee throughput if each cycle is slow (e.g., very long contexts). Optimizing real serving performance requires attending to both factors.</p>
-                    <p>The drafter&rsquo;s non-causal block attention is key to high &tau;&mdash;at K=16, each draft position sees 15 bidirectional neighbors, providing context that autoregressive drafters (which only see past positions) cannot access.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="carousel-slide" data-slide="3">
-                <div class="panel carousel-panel">
-                  <h4>Acceptance Rate by Position</h4>
-                  <div id="acceptance-gpu-vs-tpu-chart" class="chart-container chart-container-large"></div>
-                  <p class="chart-description">
-                    Acceptance probability at each of the 16 draft positions, showing how draft quality decays further from the last verified token.
-                    <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart4">view more&hellip;</button>
-                  </p>
-                  <div id="details-chart4" class="chart-details-content chart-details-collapsed">
-                    <p>Each DFlash draft block proposes 16 tokens simultaneously. Position 1 is immediately after the last verified token and is easiest to predict; acceptance probability drops at later positions because each subsequent token must match the target model&rsquo;s distribution conditioned on increasingly uncertain prior tokens.</p>
-                    <p><strong>Curve shape reveals task difficulty.</strong> Math benchmarks (gsm8k, math500) maintain &gt;70% acceptance through position 8&ndash;10 because structured reasoning chains follow predictable patterns. Chat benchmarks (chatbot_arena, wild_bench) drop below 50% by position 4&ndash;5 due to higher entropy&mdash;open-ended responses have many plausible continuations.</p>
-                    <p><strong>Flat, high curves</strong> indicate strong drafter-target alignment and mean the full K=16 block is well-utilized. <strong>Steep drop-offs</strong> suggest diminishing returns beyond a certain block size&mdash;reducing K could save compute without sacrificing many accepted tokens for those tasks.</p>
-                    <p><strong>Why DFlash excels here:</strong> the non-causal attention allows position 16 to &ldquo;see&rdquo; positions 1&ndash;15 bidirectionally during drafting, so later positions benefit from earlier ones. An autoregressive drafter at position 16 would only see positions 1&ndash;15 causally, missing the reverse conditioning that helps DFlash maintain higher acceptance deeper into the block.</p>
-                    <p>The area under each curve is proportional to &tau; for that dataset. Math500&rsquo;s curve has the largest area (&tau;=8.80), while wild_bench has the smallest (&tau;&asymp;2.8).</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="carousel-slide" data-slide="4">
-                <div class="panel carousel-panel">
-                  <h4>DFlash Speedup by Dataset (TPU V5P)</h4>
-                  <div id="v5p-speedup-chart" class="chart-container chart-container-large"></div>
-                  <p class="chart-description">
-                    DFlash speedup over autoregressive baseline on all 9 V5P benchmarks, colored by task category (math, code, chat).
-                    <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart5">view more&hellip;</button>
-                  </p>
-                  <div id="details-chart5" class="chart-details-content chart-details-collapsed">
-                    <p>Each bar shows the ratio of DFlash TPS to baseline TPS for one dataset on TPU V5P (4 chips). Color indicates task category: <strong>math</strong> (avg 3.72&times;), <strong>code</strong> (avg 2.77&times;), <strong>chat</strong> (avg 1.96&times;). The overall average across all 9 datasets is <strong>3.01&times;</strong>.</p>
-                    <p><strong>Why math leads:</strong> reasoning chains follow structured, predictable patterns (step-by-step proofs, equation manipulations) that DFlash&rsquo;s diffusion drafter can anticipate. Math500 achieves the peak speedup of <strong>4.93&times;</strong> (&tau;=8.80), actually <em>exceeding</em> the GPU paper&rsquo;s &tau;=7.84 on the same dataset&mdash;the only benchmark where TPU surpasses GPU draft quality.</p>
-                    <p><strong>Why chat lags:</strong> open-ended conversations have higher next-token entropy (many plausible continuations), causing more draft rejections. However, even the worst-case chat benchmarks still achieve ~2&times; speedup&mdash;speculative decoding is never slower than baseline.</p>
-                    <p><strong>Code sits in between:</strong> code has structured syntax (loops, function signatures) that the drafter predicts well, but variable names and logic branches introduce more uncertainty than pure math.</p>
-                    <p>Category labels along the x-axis group datasets to make these patterns immediately visible.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="carousel-slide" data-slide="5">
-                <div class="panel carousel-panel">
-                  <h4>Performance by Task Category</h4>
-                  <div id="v5p-category-chart" class="chart-container chart-container-large"></div>
-                  <p class="chart-description">
-                    Category-level aggregation: average speedup, &tau;, and DFlash TPS for math, code, and chat task groups.
-                    <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart6">view more&hellip;</button>
-                  </p>
-                  <div id="details-chart6" class="chart-details-content chart-details-collapsed">
-                    <p>Aggregating by category removes per-dataset noise and reveals the systematic relationship between task structure and DFlash performance:</p>
-                    <ul>
-                      <li><strong>Math</strong> (4 datasets): 3.72&times; speedup, &tau;=6.71, ~585 DFlash TPS</li>
-                      <li><strong>Code</strong> (2 datasets): 2.77&times; speedup, &tau;=5.09</li>
-                      <li><strong>Chat</strong> (3 datasets): 1.96&times; speedup, &tau;=3.37</li>
-                    </ul>
-                    <p>The progression math &gt; code &gt; chat reflects decreasing predictability of the output distribution. DFlash&rsquo;s non-causal block attention thrives when upcoming tokens can be inferred from bidirectional context (e.g., completing a proof step or closing a code block). Open-ended conversation has maximal next-token entropy, limiting the drafter&rsquo;s ability to propose accepted sequences.</p>
-                    <p>Each sub-panel shows a different metric to provide a complete picture: speedup alone can be misleading if the baseline is already fast; &tau; measures intrinsic draft quality independent of hardware speed; DFlash TPS shows absolute throughput for capacity planning.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="carousel-slide" data-slide="6">
-                <div class="panel carousel-panel">
-                  <h4>TPU V5P vs GPU A100 &mdash; &tau; Parity</h4>
-                  <div id="v5p-gpu-parity-chart" class="chart-container chart-container-large"></div>
-                  <p class="chart-description">
-                    Head-to-head &tau; and speedup comparison: our TPU V5P results vs published GPU A100 numbers on matching math benchmarks.
-                    <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart7">view more&hellip;</button>
-                  </p>
-                  <div id="details-chart7" class="chart-details-content chart-details-collapsed">
-                    <p>This chart directly compares our TPU V5P &tau; values against the GPU A100 numbers reported in the original DFlash paper (Table 2) for the four math benchmarks: gsm8k, math500, aime24, aime25.</p>
-                    <p><strong>Draft quality parity:</strong> TPU achieves <strong>94.9%</strong> of GPU paper &tau; on average. Math500 actually <em>exceeds</em> GPU (8.80 vs 7.84 = 112%), making it the only benchmark where our TPU port outperforms the original implementation. The remaining ~5% gap likely comes from two sources:</p>
-                    <ul>
-                      <li><strong>Numerical precision:</strong> TPU uses bf16 (8-bit exponent, 7-bit mantissa) vs GPU&rsquo;s fp16/fp32 mix, causing slightly different softmax probabilities at argmax decision boundaries.</li>
-                      <li><strong>Attention kernel differences:</strong> TPU Pallas attention vs GPU FlashAttention-2 use different tiling strategies, producing small floating-point accumulation differences.</li>
-                    </ul>
-                    <p><strong>Speedup ratios appear lower on TPU</strong> even with comparable &tau; because the TPU autoregressive baseline is already fast (6.3ms TPOT). Speculative decoding&rsquo;s relative gain is measured against this fast baseline, so the same absolute speedup in tok/s translates to a smaller ratio. This is actually a positive: it means the TPU baseline is strong, and speculative decoding provides acceleration on top of an already-optimized system.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="carousel-slide" data-slide="7">
-                <div class="panel carousel-panel">
-                  <h4>Output Quality &mdash; Exact Token Match</h4>
-                  <div id="v5p-output-quality-chart" class="chart-container chart-container-large"></div>
-                  <p class="chart-description">
-                    Fraction of output samples producing byte-identical token sequences between DFlash and autoregressive baseline across all 9 datasets.
-                    <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart8">view more&hellip;</button>
-                  </p>
-                  <div id="details-chart8" class="chart-details-content chart-details-collapsed">
-                    <p>Match rates range from 0% (swe-bench) to 62.5% (gsm8k). This wide range is <strong>expected and does not indicate correctness loss</strong>.</p>
-                    <p><strong>Why mismatches occur:</strong> during speculative decoding, the target model verifies 16 positions in a single batched forward pass. The bf16 floating-point accumulation order differs from the single-token baseline (different matrix tiling, different reduction order), producing slightly different logit values. When two candidate tokens have nearly equal probability, this can flip the argmax&mdash;producing a valid but different token. The output distribution is statistically preserved; only individual samples may diverge.</p>
-                    <p><strong>Semantic correctness is preserved:</strong> on math benchmarks with boxed final answers (gsm8k, math500, aime24, aime25), we verify that the final boxed answer matches between DFlash and baseline. Token-level divergence in intermediate reasoning steps does not affect the final answer&mdash;the model simply takes a different but equally valid reasoning path.</p>
-                    <p><strong>Why swe-bench is 0%:</strong> code generation is extremely sensitive to exact token choices (variable names, whitespace). A single different token early in generation causes a cascade of different tokens thereafter. The 0% exact match doesn&rsquo;t mean the code is wrong&mdash;it means the bf16 divergence propagated through the entire output.</p>
-                    <p><strong>gsm8k is highest (62.5%)</strong> because its outputs are shorter and more constrained (numerical answers), giving fewer opportunities for divergence to occur.</p>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <div class="carousel-nav">
-              <button class="carousel-btn carousel-btn-prev" id="carousel-prev" disabled>&larr; Previous</button>
-              <span class="carousel-indicator" id="carousel-indicator">1 / 8</span>
-              <button class="carousel-btn carousel-btn-next" id="carousel-next">Next &rarr;</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="demo" class="section">
-        <div class="container">
-          <h2>Inference Demo</h2>
-          <p>Pick a dataset prompt and compare decoded outputs and throughput across baseline decoding, DFlash (GPU/TPU), and Eagle3.</p>
-          <div id="replay-section" class="panel" style="margin-top: 20px;">
-            <div id="replay-cards" class="replay-cards">
-              <p class="replay-placeholder">Scroll down to load replay samples&hellip;</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="conclusion" class="section">
-        <div class="container">
-          <h2>Conclusion</h2>
-          <p>
-            We demonstrate that diffusion-based speculative decoding transfers effectively to TPU.
-            The DFlash port achieves <strong>94% of GPU draft quality</strong> (&tau;=6.67 standalone, 94.9% of GPU paper &tau; on math benchmarks) and delivers meaningful acceleration in both standalone (3.01&times;) and serving-pipeline (2.31&times;) settings.
-            Output quality is preserved: token mismatches arise from bf16 floating-point divergence in batch verification, not correctness errors, and final answers match on math benchmarks.
-          </p>
-          <h3>Key Findings</h3>
-          <div class="grid conclusion-charts-grid">
-            <div class="panel">
-              <h4>Step Profiling &mdash; GSM8K on TPU V4</h4>
-              <div id="profiling-chart" class="chart-container"></div>
-              <p class="chart-description">
-                Time breakdown of a single speculative decoding step: where the compute actually goes.
-                <button class="chart-view-more" aria-expanded="false" aria-controls="details-profiling">view more&hellip;</button>
-              </p>
-              <div id="details-profiling" class="chart-details-content chart-details-collapsed">
-                <p>Under sync-barrier measurement, core compute (draft forward + verify forward) accounts for only <strong>17.2%</strong> of total step time. The remaining 82.8% appears as overhead, but this is misleading: JAX&rsquo;s lazy evaluation already pipelines host-device operations well.</p>
-                <p>The real bottleneck is vLLM orchestration: the rejection-sampling loop, request scheduling, and KV cache management. Verification alone consumes 59% of step time, with the two LM-head matmuls (draft logits + verify logits) at ~30%.</p>
-                <p>This profile directly motivates two Future Work items: (1) optimizing the vLLM scheduling path to close the standalone&ndash;pipeline &tau; gap, and (2) approximate or fused LM-head approaches to reduce the 30% matmul overhead.</p>
-              </div>
-            </div>
-            <div class="panel">
-              <h4>Speculative Methods Compared</h4>
-              <div id="method-comparison-chart" class="chart-container"></div>
-              <p class="chart-description">
-                DFlash standalone vs DFlash vLLM pipeline vs Eagle3: speedup comparison on math benchmarks (TPU V4).
-                <button class="chart-view-more" aria-expanded="false" aria-controls="details-methods">view more&hellip;</button>
-              </p>
-              <div id="details-methods" class="chart-details-content chart-details-collapsed">
-                <p>Three speculative decoding configurations are compared on math benchmarks using TPU V4. DFlash standalone runs the draft-verify loop without vLLM overhead; DFlash pipeline runs inside the full vLLM serving stack; Eagle3 is an autoregressive drafter baseline.</p>
-                <p>The standalone&ndash;pipeline gap (&tau; 6.67 vs 4.48) quantifies vLLM orchestration cost. Eagle3&rsquo;s lower speedup comes from its O(k) sequential drafting: 16 draft tokens require 16 serial forward passes vs DFlash&rsquo;s single pass.</p>
-                <p>Despite Eagle3&rsquo;s competitive acceptance rates (it was trained on 1.4M samples vs DFlash&rsquo;s 289K), its sequential proposal bottleneck limits throughput. This demonstrates that <em>proposal speed</em>, not just draft quality, determines end-to-end speculative decoding performance.</p>
-              </div>
-            </div>
-          </div>
-          <ul>
-            <li><strong>Pipeline overhead dominates the standalone&ndash;pipeline gap:</strong> profiling shows that 82.8% of step time appears as overhead under sync-barrier measurement, but JAX&rsquo;s lazy evaluation already pipelines operations well. The real bottleneck is vLLM orchestration (scheduling, rejection sampling loop), not host-device transfers. Verification alone accounts for 59% of step time; the two LM head matmuls account for ~30%.</li>
-            <li><strong>TPU verification cost is flat:</strong> verification cost ratio at K=128/K=16 is 0.97&times; on TPU at all context lengths tested (L=64&ndash;1024), compared to ~2.3&times; on GPU at L=1024. The entire hardware contrast lives in attention handling&mdash;FFN is memory-bandwidth-bound and flat on both hardware (GPU FFN: 1.09&times;, TPU FFN: 0.95&times;). TPU&rsquo;s paged attention kernel (RPA v3) and systolic pipeline absorb attention compute within the weight-loading window.</li>
-            <li><strong>Diffusion + TPU intersection:</strong> only the combination of diffusion drafting (O(1) draft cost regardless of block size) and TPU (flat verification) makes larger block sizes (K&gt;16) viable. An autoregressive drafter at K=128 requires 8&times; sequential passes on either hardware. GPU DFlash draft cost is 1.22&times; at K=128 (near-flat), but GPU verification attention scales to 2.51&times; at L=1024. Neither alone is sufficient; only the bottom-right cell of the 2&times;2 matrix (diffusion + TPU) keeps both sides flat.</li>
-            <li><strong>TPU advantage grows with context length:</strong> GPU verification penalty at K=128 grows from ~1.08&times; (L=64) to ~2.3&times; (L=1024). Speculative decoding benefits the most on long-generation tasks (chain-of-thought, code generation)&mdash;exactly where the TPU advantage is strongest.</li>
-            <li><strong>Iterative refinement does not help:</strong> replacing mask tokens with predicted tokens for refinement passes degrades &tau; from 6.18 to ~2.5, because the model was trained on mask-token inputs and sees predicted tokens as out-of-distribution.</li>
-          </ul>
-
-          <h3>Hardware Generations</h3>
-          <div class="grid conclusion-charts-grid">
-            <div class="panel">
-              <h4>DFlash Speedup: TPU V4 vs V5P</h4>
-              <div id="v5p-vs-v4-chart" class="chart-container"></div>
-              <p class="chart-description">
-                Speedup comparison across TPU generations: V4 vs V5P on matching benchmarks.
-                <button class="chart-view-more" aria-expanded="false" aria-controls="details-v5v4">view more&hellip;</button>
-              </p>
-              <div id="details-v5v4" class="chart-details-content chart-details-collapsed">
-                <p>V5P&rsquo;s autoregressive baseline is <strong>1.69&times; faster</strong> than V4, meaning V5P starts from a higher throughput floor. DFlash speedup <em>ratios</em> appear slightly lower on V5P because the same absolute tok/s improvement yields a smaller ratio against a faster baseline.</p>
-                <p>However, <strong>absolute DFlash TPS on V5P is higher</strong> across all benchmarks. For capacity planning, absolute throughput matters more than the ratio&mdash;V5P DFlash serves more tokens per second than V4 DFlash on every dataset.</p>
-                <p>The &tau; values are similar across generations (same draft model checkpoint, same attention pattern), confirming that draft quality is a property of the model, not the hardware. The throughput difference comes from V5P&rsquo;s faster MXU and HBM bandwidth.</p>
-              </div>
-            </div>
-            <div class="panel">
-              <h4>Cost Efficiency &mdash; TPU vs GPU</h4>
-              <div id="cost-efficiency-chart" class="chart-container"></div>
-              <p class="chart-description">
-                Cost per million tokens at GCP on-demand pricing: V5P $2.10/hr, V4 $3.22/hr, GPU A100 ~$5.07/hr.
-                <button class="chart-view-more" aria-expanded="false" aria-controls="details-cost">view more&hellip;</button>
-              </p>
-              <div id="details-cost" class="chart-details-content chart-details-collapsed">
-                <p>Each bar shows the dollar cost to generate one million tokens on that hardware, calculated as: <code>(price_per_hour / tokens_per_second) &times; (1,000,000 / 3600)</code>. Lower bars mean more cost-effective inference.</p>
-                <p>TPU V5P with DFlash is the most cost-efficient option across all benchmarks. Although V5P&rsquo;s on-demand price ($2.10/hr per chip) is lower than V4 ($3.22/hr) and GPU A100 ($5.07/hr), the cost advantage is amplified by DFlash&rsquo;s throughput boost: higher tok/s at lower $/hr compounds into dramatically lower $/Mtok.</p>
-                <p>The dashed line shows the average V5P cost across benchmarks. Math benchmarks achieve the lowest cost because their high &tau; translates to the highest DFlash throughput. Chat benchmarks are more expensive per token but still cheaper than GPU baseline on any task.</p>
-                <p>Note: prices are GCP on-demand and don&rsquo;t reflect committed-use discounts, spot pricing, or reserved capacity, which would further favor TPU (Google offers deeper discounts on its own hardware).</p>
-              </div>
-            </div>
-          </div>
-
-          <h3>Future Work</h3>
-          <ul>
-            <li><strong>Wider block sizes (K=64, K=128):</strong> TPU&rsquo;s flat verification cost enables training DFlash drafters at larger block sizes. Our measurements show both draft and verify cost remain flat through K=128 on TPU (draft: 0.95&times;, verify: 0.97&times;). At K=128, each draft position sees 127 bidirectional neighbors versus only 15 at K=16, providing fundamentally richer conditioning&mdash;an advantage exclusive to diffusion-style parallel drafters. No published work has trained a target-conditioned block-diffusion drafter at K&ge;64; this fills a key gap in the literature.</li>
-            <li><strong>vLLM pipeline optimization:</strong> the &tau; gap between standalone (6.67) and pipeline (4.48) stems from vLLM orchestration overhead (scheduling, rejection sampling loop), not model compute. Instrumenting and optimizing <code>speculative_decoding_manager.py</code>&rsquo;s scheduling path could recover a significant portion of this gap.</li>
-            <li><strong>LM head optimization:</strong> the two LM head matmuls (draft logits + verify logits) account for ~30% of step time. Approximate or fused approaches such as top-k projection could reduce this cost substantially.</li>
-            <li><strong>Context-position &tau; correlation:</strong> preliminary analysis suggests acceptance rate may improve as generation progresses (more KV context &rarr; better drafter conditioning). If confirmed, this would be a compounding advantage: longer conversations yield both better &tau; and no additional verification cost on TPU.</li>
-            <li><strong>K-ceiling characterization:</strong> the flat region has been measured through K=256 (1.02&times;). Extending measurements to K=512 and K=1024 would characterize where the memory-bandwidth-bound regime transitions to compute-bound, establishing the full design space for wider drafters.</li>
-            <li><strong>Upstream contribution:</strong> the implementation requires zero vLLM changes and is ready for a <code>tpu-inference</code> PR. A small 10-line vLLM change would enable <code>vllm serve --speculative-method dflash</code>.</li>
-          </ul>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="container">
-        <span>UCSD Data Science Capstone - DFlash on TPU</span>
       </div>
-    </footer>
+    </div>
+  </div>
+</section>
 
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/dataLoader.js"></script>
-    <script src="js/charts.js"></script>
-    <script src="js/replay.js"></script>
-    <script src="js/scrollTrigger.js"></script>
-    <script src="js/app.js"></script>
-  </body>
+
+<section class="section" id="methods">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Methods</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            Porting DFlash from GPU/PyTorch to TPU/JAX required rethinking every stateful component.
+            PyTorch&rsquo;s DFlash relies on mutable state: <code>DynamicCache.append()</code>, in-place tensor ops, and Python-level control flow.
+            JAX is functional: all arrays are immutable and model functions must return new state, driving the architecture of every subsystem below.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="has-text-centered" style="margin-bottom: 1.5rem;">
+      <img src="./static/images/methods_diagram.svg"
+           alt="DFlash Structure on TPU"
+           style="max-width:100%;height:auto;border-radius:8px;">
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+
+        <div class="content has-text-justified">
+
+          <h3 class="title is-4">Non-Causal Attention on TPU</h3>
+          <p>
+            DFlash&rsquo;s draft tokens attend to all \(K\) positions <strong>bidirectionally</strong>, but the TPU runtime&rsquo;s default attention (ragged paged attention) is causal-only.
+            We implemented a separate kernel (<code>dflash_concat_attention</code>) that concatenates context and noise K/V, applies a non-causal mask within the block and a causal mask to the cache, and routes through TPU Pallas <code>flash_attention</code> with <code>causal=False</code>.
+          </p>
+
+          <h3 class="title is-4">KV Cache Architecture</h3>
+          <p>
+            The target model uses vLLM&rsquo;s paged KV cache; the draft model uses pre-allocated contiguous JAX arrays per layer, updated immutably via <code>dynamic_update_slice</code>.
+            This design evolved through three iterations: an initial context-buffer-only approach lost K/V history (\(\tau = 2.38\)), a na&iuml;ve per-layer cache collapsed due to pytree mismatch triggering JIT retracing, and the final version pads context to the next power-of-2 to cap retrace shapes at \(\sim\!12\).
+          </p>
+
+          <h3 class="title is-4">Critical Bug: Sequence-Length Inflation</h3>
+          <p>
+            The most impactful discovery: vLLM&rsquo;s speculative decoding manager passed <code>seq_lens</code> that included <em>unverified draft tokens</em>, inflating the length by 10 to 16 phantom tokens per step.
+            This silently corrupted the context buffer, KV cache positions, and RoPE embeddings simultaneously.
+            A four-line fix, extracting the ground-truth accepted count (<code>num_tokens_no_spec</code>), nearly doubled performance (\(\tau\!: 2.49 \to 4.48\), speedup: \(1.30\times \to 2.31\times\)).
+          </p>
+
+          <h3 class="title is-4">Validation</h3>
+          <p>
+            Three A/B experiments confirmed correctness: toggling between Pallas <code>flash_attention</code> and manual dot-product, switching position schemes, and disabling the KV cache entirely all produced bit-identical outputs.
+            The remaining gap versus GPU paper numbers (\(\tau = 6.67\) vs. \(7.07\)) is attributable to checkpoint differences, not implementation bugs.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="results">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Results</h2>
+        <div class="content has-text-justified">
+          <p>
+            We evaluate DFlash on <strong>Qwen3-4B</strong> (target) with <strong>DFlash-b16</strong> (draft, block size 16) on a single TPU V5P host (4 chips, 8 cores).
+            Benchmarks span 9 datasets across three task categories: <strong>math</strong> (AIME 2024, AIME 2025, MATH-500, GSM8K), <strong>code</strong> (HumanEval, MBPP, SWE-Bench), and <strong>chat</strong> (MT-Bench, Alpaca).
+            All experiments use greedy decoding (temperature = 0) to ensure deterministic, reproducible comparisons.
+          </p>
+          <p>
+            In standalone mode (raw model decoding without the vLLM serving layer), DFlash achieves an average \(\mathbf{3.01\times}\) speedup over autoregressive decoding, peaking at \(\mathbf{3.72\times}\) on math tasks where token predictability is highest.
+            In the full vLLM serving pipeline, which adds scheduling, paged KV cache management, and rejection-sampling overhead, the speedup is \(\mathbf{2.31\times}\).
+          </p>
+          <p>
+            Critically, TPU draft quality matches the original GPU implementation: our port achieves \(\mathbf{94.9\%}\) of published GPU \(\tau\) (accepted tokens per draft) on average, and <em>exceeds</em> GPU on MATH-500 (\(8.80\) vs. \(7.84\)).
+            The small remaining gap is attributable to bf16 vs. fp16 numerical precision rather than any architectural limitation.
+          </p>
+        </div>
+
+        <div id="summary-dashboard-chart" class="chart-container dashboard-container"></div>
+
+        <h3 class="title is-4" style="margin-top: 2rem;">Detailed Results</h3>
+
+        <div class="chart-carousel" id="chart-carousel">
+          <div class="carousel-slides">
+
+            <div class="carousel-slide active" data-slide="0">
+              <div class="panel carousel-panel">
+                <h4 class="title is-5">vLLM Pipeline TPS</h4>
+                <div id="vllm-pipeline-tps-chart" class="chart-container chart-container-large"></div>
+                <p class="chart-description">
+                  End-to-end tokens/sec throughput in the full vLLM serving pipeline comparing baseline, DFlash, and Eagle3 speculative methods.
+                  <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart1">view more&hellip;</button>
+                </p>
+                <div id="details-chart1" class="chart-details-content chart-details-collapsed">
+                  <p>This measures <strong>real serving throughput</strong>, not just raw decoding speed. The vLLM pipeline adds request scheduling, paged KV cache management, batch formation, and the rejection-sampling verification loop on top of the model forward pass.</p>
+                  <p>DFlash achieves \(\mathbf{2.31\times}\) speedup over baseline by drafting all 16 tokens in a single diffusion forward pass. Eagle3 (autoregressive drafter) is included as a reference. Its sequential \(\mathcal{O}(k)\) drafting makes it slower per proposal despite competitive acceptance rates.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-slide" data-slide="1">
+              <div class="panel carousel-panel">
+                <h4 class="title is-5">Standalone TPU vs GPU DFlash</h4>
+                <div id="standalone-tpu-vs-gpu-chart" class="chart-container chart-container-large"></div>
+                <p class="chart-description">
+                  Side-by-side DFlash throughput (tok/s) on TPU V5P vs GPU A100 paper numbers for the four math benchmarks with published GPU data.
+                  <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart2">view more&hellip;</button>
+                </p>
+                <div id="details-chart2" class="chart-details-content chart-details-collapsed">
+                  <p>Despite a full framework migration (PyTorch &rarr; JAX) and entirely different hardware (NVIDIA A100 &rarr; Google TPU V5P), TPU throughput consistently matches or exceeds GPU. This confirms that DFlash&rsquo;s block-parallel drafting pattern maps naturally to TPU&rsquo;s systolic MXU architecture.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-slide" data-slide="2">
+              <div class="panel carousel-panel">
+                <h4 class="title is-5">Acceptance Volume (\(\tau \times\) drafts/sec)</h4>
+                <div id="acceptance-analysis-chart" class="chart-container chart-container-large"></div>
+                <p class="chart-description">
+                  Effective throughput decomposed into two factors: bar height = \(\tau\) (accepted tokens/draft), bar width = drafts/sec, bar area = total accepted tokens/sec.
+                  <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart3">view more&hellip;</button>
+                </p>
+                <div id="details-chart3" class="chart-details-content chart-details-collapsed">
+                  <p>Speculative decoding throughput depends on two independent factors: (1) how many tokens the target model accepts per draft block (\(\tau\)), and (2) how many draft blocks the system proposes per second (drafts/sec). This chart visualizes both simultaneously.</p>
+                  <p>Math tasks exhibit the highest \(\tau\) values because structured reasoning produces highly predictable token sequences. Code tasks have moderate \(\tau\) due to syntactic patterns, while chat tasks are least predictable. Drafts/sec is primarily determined by hardware speed and model size, remaining relatively constant across tasks.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-slide" data-slide="3">
+              <div class="panel carousel-panel">
+                <h4 class="title is-5">Acceptance Rate by Position</h4>
+                <div id="acceptance-gpu-vs-tpu-chart" class="chart-container chart-container-large"></div>
+                <p class="chart-description">
+                  Acceptance probability at each of the 16 draft positions, showing how draft quality decays further from the last verified token.
+                  <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart4">view more&hellip;</button>
+                </p>
+                <div id="details-chart4" class="chart-details-content chart-details-collapsed">
+                  <p>Position 1 is immediately after the last verified token and is easiest to predict; acceptance probability drops at later positions. Math benchmarks maintain &gt;70% acceptance through position 8 to 10; chat benchmarks drop below 50% by position 4 to 5.</p>
+                  <p>This decay pattern explains why DFlash&rsquo;s block size of 16 is well-calibrated: most of the accepted tokens come from the first 8 to 10 positions, and the marginal gain from later positions is small. The bidirectional context available in diffusion drafting helps sustain acceptance at later positions compared to autoregressive drafters.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-slide" data-slide="4">
+              <div class="panel carousel-panel">
+                <h4 class="title is-5">DFlash Speedup by Dataset (TPU V5P)</h4>
+                <div id="v5p-speedup-chart" class="chart-container chart-container-large"></div>
+                <p class="chart-description">
+                  DFlash speedup over autoregressive baseline on all 9 V5P benchmarks, colored by task category (math, code, chat).
+                  <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart5">view more&hellip;</button>
+                </p>
+                <div id="details-chart5" class="chart-details-content chart-details-collapsed">
+                  <p>Each bar shows the ratio of DFlash TPS to baseline TPS. Color indicates task category: <strong>math</strong> (avg \(3.72\times\)), <strong>code</strong> (avg \(2.77\times\)), <strong>chat</strong> (avg \(1.96\times\)). Overall average: \(\mathbf{3.01\times}\).</p>
+                  <p>The variation across datasets reflects the inherent predictability of different content types. AIME problems, with their structured mathematical reasoning chains, yield the highest speedups. SWE-Bench and MT-Bench, requiring diverse and less predictable outputs, show more modest but still substantial gains.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-slide" data-slide="5">
+              <div class="panel carousel-panel">
+                <h4 class="title is-5">Performance by Task Category</h4>
+                <div id="v5p-category-chart" class="chart-container chart-container-large"></div>
+                <p class="chart-description">
+                  Category-level aggregation: average speedup, \(\tau\), and DFlash TPS for math, code, and chat task groups.
+                  <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart6">view more&hellip;</button>
+                </p>
+                <div id="details-chart6" class="chart-details-content chart-details-collapsed">
+                  <p>The progression math &gt; code &gt; chat reflects decreasing predictability. DFlash&rsquo;s non-causal block attention thrives when upcoming tokens can be inferred from bidirectional context.</p>
+                  <p>Math tasks benefit from long chains of formulaic reasoning where each step follows logically from the previous one. Code tasks exhibit predictable syntactic patterns but more variable logic. Chat tasks involve creative, open-ended generation where the drafter has less context to leverage.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-slide" data-slide="6">
+              <div class="panel carousel-panel">
+                <h4 class="title is-5">TPU V5P vs GPU A100: \(\tau\) Parity</h4>
+                <div id="v5p-gpu-parity-chart" class="chart-container chart-container-large"></div>
+                <p class="chart-description">
+                  Head-to-head \(\tau\) and speedup comparison: our TPU V5P results vs. published GPU A100 numbers on matching math benchmarks.
+                  <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart7">view more&hellip;</button>
+                </p>
+                <div id="details-chart7" class="chart-details-content chart-details-collapsed">
+                  <p>TPU achieves \(\mathbf{94.9\%}\) of GPU paper \(\tau\) on average. Math500 <em>exceeds</em> GPU (\(8.80\) vs. \(7.84 = 112\%\)). The remaining gap likely comes from bf16 vs. fp16/fp32 precision and different attention kernel tiling.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-slide" data-slide="7">
+              <div class="panel carousel-panel">
+                <h4 class="title is-5">Output Quality: Exact Token Match</h4>
+                <div id="v5p-output-quality-chart" class="chart-container chart-container-large"></div>
+                <p class="chart-description">
+                  Fraction of output samples producing byte-identical token sequences between DFlash and autoregressive baseline across all 9 datasets.
+                  <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart8">view more&hellip;</button>
+                </p>
+                <div id="details-chart8" class="chart-details-content chart-details-collapsed">
+                  <p>Match rates range from 0% (swe-bench) to 62.5% (gsm8k). Mismatches are <strong>expected</strong> and come from bf16 floating-point divergence in batch verification, not correctness errors.</p>
+                  <p>When the drafter and verifier process tokens in parallel batches, bf16 rounding accumulates differently than in sequential autoregressive decoding. This creates numerically distinct but semantically equivalent outputs. GSM8K&rsquo;s shorter, more formulaic answers naturally produce higher exact-match rates. Longer, more complex outputs (SWE-Bench) diverge earlier but remain correct.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-slide" data-slide="8">
+              <div class="panel carousel-panel">
+                <h4 class="title is-5">Step Profiling: GSM8K on TPU V4</h4>
+                <div id="profiling-chart" class="chart-container chart-container-large"></div>
+                <p class="chart-description">
+                  Time breakdown of a single speculative decoding step.
+                  <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart9">view more&hellip;</button>
+                </p>
+                <div id="details-chart9" class="chart-details-content chart-details-collapsed">
+                  <p>Verification alone is \(59\%\) of step time; LM head matmuls are \(\sim\!30\%\). vLLM orchestration (scheduling, rejection sampling) accounts for most of the standalone to pipeline gap.</p>
+                  <p>The target model&rsquo;s verification forward pass dominates because it must process all 16 draft tokens in a single pass. The LM head projection (hidden dim &rarr; vocabulary size) is the most compute-intensive single operation. Draft generation, by contrast, is lightweight: the diffusion model produces all 16 tokens in one forward pass, costing only \(\sim\!5\%\) of total step time.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-slide" data-slide="9">
+              <div class="panel carousel-panel">
+                <h4 class="title is-5">Speculative Methods Compared</h4>
+                <div id="method-comparison-chart" class="chart-container chart-container-large"></div>
+                <p class="chart-description">
+                  DFlash standalone vs pipeline vs Eagle3 on math benchmarks (TPU V4).
+                  <button class="chart-view-more" aria-expanded="false" aria-controls="details-chart10">view more&hellip;</button>
+                </p>
+                <div id="details-chart10" class="chart-details-content chart-details-collapsed">
+                  <p>DFlash+TPU is the only combination where both draft and verify stay constant as block size grows. Cost ratio at \(K\!=\!128\,/\,K\!=\!16\) is \(0.97\times\) on TPU vs. \(\sim\!2.3\times\) on GPU.</p>
+                  <p>Autoregressive drafters (Eagle3) require \(\mathcal{O}(k)\) sequential forward passes per draft, making them increasingly expensive at larger block sizes. DFlash generates all \(k\) tokens in a single diffusion pass regardless of \(k\), giving it a fundamental scaling advantage. On TPU, the systolic array executes the same padded matrix multiply whether \(k\!=\!16\) or \(k\!=\!128\), so increasing draft length is essentially free.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="carousel-nav">
+            <button class="carousel-btn carousel-btn-prev" id="carousel-prev" disabled>&larr; Previous</button>
+            <span class="carousel-indicator" id="carousel-indicator">1 / 10</span>
+            <button class="carousel-btn carousel-btn-next" id="carousel-next">Next &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="conclusion">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Conclusion</h2>
+        <div class="content has-text-justified">
+          <p>
+            We have demonstrated that diffusion-based speculative decoding transfers effectively from GPU to TPU, despite fundamental differences in programming models and hardware characteristics.
+            By porting DFlash from PyTorch to JAX within the vLLM serving stack, we addressed three core engineering challenges: implementing non-causal attention through a dedicated Pallas kernel, designing an immutable KV cache architecture compatible with JAX's functional paradigm, and diagnosing a critical sequence-length inflation bug in vLLM's speculative decoding manager.
+          </p>
+          <p>
+            Our evaluation across 9 benchmarks spanning math, code, and chat tasks shows that the TPU port achieves \(\mathbf{94.9\%}\) of GPU draft quality (\(\tau\)) while delivering \(\mathbf{3.01\times}\) standalone speedup and \(\mathbf{2.31\times}\) end-to-end vLLM pipeline speedup over autoregressive decoding.
+            Notably, DFlash's single-pass block drafting is a natural fit for TPU's architecture: verification cost remains flat as block size grows, unlike autoregressive drafters (e.g., Eagle3) where cost scales linearly with draft length.
+          </p>
+          <p>
+            The cost analysis further validates TPU as a compelling platform for speculative decoding. At GCP on-demand pricing, TPU V5P with DFlash achieves the lowest cost per million tokens among all hardware and method combinations tested, making it a practical choice for production LLM serving workloads.
+          </p>
+
+          <h3 class="title is-4">Hardware Generations</h3>
+
+          <div class="panel" style="margin-bottom: 1rem;">
+            <h4 class="title is-5">DFlash Speedup: TPU V4 vs V5P</h4>
+            <div id="v5p-vs-v4-chart" class="chart-container"></div>
+            <p class="chart-description">V5P baseline is \(1.69\times\) faster than V4; absolute DFlash TPS is higher on V5P across all benchmarks.</p>
+          </div>
+
+          <div class="panel" style="margin-bottom: 1rem;">
+            <h4 class="title is-5">Cost Efficiency: TPU vs GPU</h4>
+            <div id="cost-efficiency-chart" class="chart-container"></div>
+            <p class="chart-description">$/million tokens at GCP on-demand pricing. V5P + DFlash is the most cost-efficient option.</p>
+          </div>
+
+          <h3 class="title is-4">Future Work</h3>
+          <p>Several directions remain open for further improvement:</p>
+          <ul>
+            <li><strong>Wider draft blocks (\(K\!=\!64\) to \(128\)):</strong> TPU verification cost stays constant as block size grows, making larger blocks viable. Wider blocks provide richer bidirectional context for the diffusion drafter, potentially increasing \(\tau\) and overall throughput.</li>
+            <li><strong>Pipeline optimization:</strong> The standalone \(\tau\) of \(6.67\) drops to \(4.48\) in the full vLLM pipeline. Step profiling shows that vLLM orchestration (scheduling, rejection sampling, KV cache management) accounts for most of this gap. Streamlining the speculative decoding loop could recover much of the lost performance.</li>
+            <li><strong>LM head fusion:</strong> The two LM head matmuls (draft and target) account for \(\sim\!30\%\) of step time. Approximate methods such as Medusa-style parallel heads, or fused kernel implementations, could substantially reduce this bottleneck.</li>
+            <li><strong>Multi-device scaling:</strong> Our current evaluation uses a single TPU V5P host (4 chips). Extending to multi-host configurations with tensor parallelism could further improve serving throughput for larger models.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@misc{2025capstone_dflash_tpu,
+  author    = {Feng, Aaron and Luo, Zhongyan and Nguyen, Son and Huang, Andy},
+  title     = {Porting DFlash to TPU: Accelerating LLM Inference with Speculative Decoding},
+  year      = {2025},
+  institution = {UC San Diego},
+  note      = {DSC 180 Capstone Project},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://github.com/aaronzhfeng/tpu-spec-decode">
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            UCSD Data Science Capstone: DFlash on TPU
+          </p>
+          <p>
+            This website uses the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> project page template,
+            licensed under <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
 </html>
